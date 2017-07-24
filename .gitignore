@@ -1,1 +1,3 @@
 app/node_modules
+app/ios/build
+app/android/build
