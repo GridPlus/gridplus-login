@@ -1,0 +1,21 @@
+dependencies: \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/node_modules/react-native/Libraries/Text/RCTText.m \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/node_modules/react-native/Libraries/Text/RCTText.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTUtils.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTAssert.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTDefines.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/UIView+React.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTComponent.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/node_modules/react-native/Libraries/Text/RCTShadowText.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTShadowView.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTRootView.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridge.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeDelegate.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTJavaScriptLoader.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTBridgeModule.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTFrameUpdate.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTInvalidating.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/Yoga.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGEnums.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/yoga/YGMacros.h \
+  /Users/alexmiller/Consensys/gridplus-login/GridPlus/ios/build/Build/Products/Debug-iphonesimulator/include/React/RCTTextDecorationLineType.h
