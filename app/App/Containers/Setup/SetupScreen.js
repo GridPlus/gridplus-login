@@ -1,7 +1,9 @@
 // This screen will load if no wallet exists on the device.
 
 import React, { Component } from 'react'
+var Styles = require('../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
+import { Divider } from 'react-native-elements'
 import DevscreensButton from '../../../ignite/DevScreens/DevscreensButton.js'
 import RoundedButton from '../../Components/RoundedButton'
 import { Images } from '../../Themes'
@@ -25,16 +27,15 @@ const KEY_PATH = ifs.DocumentDirectoryPath + '/keystore'
 export default class RegisterScreen extends Component {
 
   state = {
-    m: null     // The mnemonic
+    m: null,                      // The mnemonic
+    seed_written: false,          // True if the user says she has written the seed down
+    double_check: false,          // True after double check
   }
 
   componentDidMount() {
+    // Get a key (if one exists) and rerender
     this.getKey()
     .then((exists) => {
-      if (!exists) { return this.generateKey(); }
-      else { return; }
-    })
-    .then(() => {
       this.forceUpdate()
     })
   }
@@ -85,15 +86,76 @@ export default class RegisterScreen extends Component {
       ifs.readFile(KEY_PATH)
       .then((m) => {
         this.state.m = m;
-        console.log('this.state.m', this.state.m)
         resolve(true);
       })
       .catch((err) => { resolve(false); })
     })
   }
 
+
+  renderProceed() {
+    if (!this.state.seed_written) {
+      return (
+        <RoundedButton onPress={() => { this.state.seed_written = true; this.forceUpdate(); }}>
+          I have written this down
+        </RoundedButton>
+      );
+    } else if (!this.state.double_check) {
+      return (
+        <RoundedButton onPress={() => { this.state.double_check = true; this.forceUpdate(); }}>
+          I promise I have written it down
+        </RoundedButton>
+      );
+    } else {
+      return;
+    }
+  }
+
+  renderBackupPhrase() {
+    return (
+      <View >
+        <Text style={Styles.titleText}>
+          Your backup phrase
+        </Text>
+        <Text style={styles.sectionText}>
+          {this.state.m}
+        </Text>
+        <Divider/>
+        <Text style={Styles.boldText}>
+          YOU MUST WRITE THIS DOWN!
+        </Text>
+        <Text style={styles.sectionText}>
+          If you lose this, we CANNOT recover it for you!
+        </Text>
+        {this.renderProceed()}
+      </View>
+    );
+  }
+
+  renderSetup() {
+    if (!this.state.m) {
+      return (
+        <View style={styles.section} >
+          <Text style={Styles.titleText}>
+            Welcome.
+          </Text>
+          <Text style={styles.sectionText}>
+            Do you have a backup phrase already?
+          </Text>
+          <RoundedButton
+            onPress={() => this.generateKey().then(() => { this.forceUpdate(); })}
+          >
+            No, create one
+          </RoundedButton>
+          <RoundedButton>Yes</RoundedButton>
+        </View>
+      )
+    } else {
+      return this.renderBackupPhrase()
+    }
+  }
+
   render () {
-    console.log('this.state.m', this.state.m)
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
@@ -101,17 +163,7 @@ export default class RegisterScreen extends Component {
           <View style={styles.centered}>
             <Image source={Images.coloredLogo} style={styles.logo} />
           </View>
-
-          <View style={styles.section} >
-            <Text style={styles.sectionText}>
-              Your backup phrase
-            </Text>
-            <Text style={styles.sectionText}>
-              {this.state.m}
-            </Text>
-          </View>
-
-          <DevscreensButton/>
+          {this.renderSetup()}
         </ScrollView>
       </View>
     )
