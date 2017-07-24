@@ -3,7 +3,7 @@ import { ScrollView, Text, Image, View } from 'react-native'
 import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
 import RoundedButton from '../Components/RoundedButton'
 import { Images } from '../Themes'
-import LoginScreen from './Login/LoginScreen'
+import SetupScreen from './Setup/SetupScreen'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,events,process,stream,vm --hack",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean --force",
@@ -23,28 +24,43 @@
     "lint": "standard --verbose | snazzy",
     "lintdiff": "git diff --name-only --cached --relative | grep '\\.js$' | xargs standard | snazzy",
     "fixcode": "standard --fix",
-    "run": "react-native run-ios"
+    "ios": "react-native run-ios"
   },
   "dependencies": {
     "apisauce": "^0.14.0",
+    "assert": "^1.4.1",
+    "bip39": "^2.3.1",
+    "bluebird": "^3.5.0",
+    "browserify-sign": "^4.0.4",
+    "buffer": "^3.6.0",
+    "events": "^1.1.1",
     "format-json": "^1.0.3",
     "lodash": "^4.17.2",
+    "process": "^0.11.10",
     "prop-types": "^15.5.10",
     "querystringify": "0.0.4",
     "ramda": "^0.24.1",
     "react": "16.0.0-alpha.12",
     "react-native": "0.45.1",
     "react-native-animatable": "^1.2.2",
+    "react-native-bip39": "^2.3.0",
     "react-native-config": "^0.2.1",
     "react-native-device-info": "0.10.2",
     "react-native-drawer": "^2.3.0",
+    "react-native-fs": "^2.3.3",
+    "react-native-randombytes": "^2.2.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "^5.0.2",
+    "readable-stream": "^1.0.33",
     "redux": "^3.6.0",
     "redux-persist": "^4.1.0",
     "redux-saga": "^0.14.3",
     "reduxsauce": "0.4.1",
     "seamless-immutable": "^7.0.1",
+    "steam": "^1.4.0",
+    "stream-browserify": "^1.0.0",
+    "string_decoder": "^1.0.3",
+    "vm-browserify": "0.0.4",
     "watchman": "^0.1.8"
   },
   "devDependencies": {
@@ -67,6 +83,7 @@
     "reactotron-react-native": "^1.12.0",
     "reactotron-redux": "^1.11.1",
     "reactotron-redux-saga": "^1.11.1",
+    "rn-nodeify": "^7.0.1",
     "snazzy": "^7.0.0",
     "standard": "10.0.2"
   },
@@ -99,5 +116,25 @@
       "FormData",
       "React$Element"
     ]
+  },
+  "react-native": {
+    "crypto": "react-native-crypto",
+    "vm": "vm-browserify",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
+  },
+  "browser": {
+    "crypto": "react-native-crypto",
+    "vm": "vm-browserify",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }
