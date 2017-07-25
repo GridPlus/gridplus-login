@@ -160,7 +160,9 @@ export default class RegisterScreen extends Component {
       // lowercase and strip whitespace
       let word = this.state.phrase[i].toLowerCase().replace(/ /g,'');
       // Make sure all words match the wordlist
-      if (wordlist.words.indexOf(this.state.phrase[i]) == -1) {
+      console.log('word', word)
+      console.log('index', wordlist.words.indexOf(word))
+      if (wordlist.words.indexOf(word) == -1) {
         bad_word = true;
       }
     }
@@ -242,8 +244,10 @@ export default class RegisterScreen extends Component {
       )
     } else if (this.state.enter_phrase && this.state.phrase_matches == false) {
       return this.renderEnterPhrase()
-    } else {
+    } else if (!this.state.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
+    } else {
+      return;
     }
   }
 
