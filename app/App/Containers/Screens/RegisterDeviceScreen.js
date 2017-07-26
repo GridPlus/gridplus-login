@@ -19,7 +19,9 @@ import styles from '../Styles/LaunchScreenStyles'
 export default class RegisterScreen extends Component {
 
   state = {
-    s: null
+    s: null,
+    serial_error: false,
+    serial_entered: false,
   }
 
   componentDidMount() {
@@ -31,6 +33,47 @@ export default class RegisterScreen extends Component {
     })
   }
 
+  renderEnterSerialError() {
+    if (this.state.serial_error) {
+      return (<Text style={Styles.errorText}>The serial number you entered did not match our records. Make sure you enter it exactly as it appears</Text>)
+    } else {
+      return;
+    }
+  }
+
+  renderEnterSerial() {
+    return (
+      <View style={styles.section}>
+        <Text style={Styles.titleText}>Enter Serial Number</Text>
+        <Text style={Styles.centerText}>This number is printed on your agent's box and may contain letters. Please enter it as it is printed.</Text>
+        {this.renderEnterSerialError()}
+        <FormLabel>Serial Number:</FormLabel>
+        <FormInput onChangeText={(text) => { this.state.s = text;} }/>
+        <RoundedButton
+          onPress={() => {
+            // TODO: Look up on Ethereum to see if this has been whitelisted
+            let pass = false;
+            if (!pass) {
+              this.state.serial_error = true;
+            } else {
+              this.state.serial_entered = true;
+            }
+            this.forceUpdate();
+          }}
+        >
+          Submit
+        </RoundedButton>
+      </View>
+    )
+  }
+
+  renderContent() {
+    if (!this.state.s || !this.state.serial_entered || !this.state.serial_error) {
+      return this.renderEnterSerial()
+    } else {
+      return;
+    }
+  }
 
   render () {
     return (
@@ -38,8 +81,7 @@ export default class RegisterScreen extends Component {
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
           <View>
-            <Text>Serial number</Text>
-            {this.state.s}
+            {this.renderContent()}
           </View>
         </ScrollView>
       </View>
