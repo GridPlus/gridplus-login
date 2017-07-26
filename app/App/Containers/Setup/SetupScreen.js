@@ -6,6 +6,7 @@ import { ScrollView, Text, Image, View } from 'react-native'
 import { Divider, FormLabel, FormInput } from 'react-native-elements'
 import DevscreensButton from '../../../ignite/DevScreens/DevscreensButton.js'
 import RoundedButton from '../../Components/RoundedButton'
+import LaunchScreen from '../LaunchScreen'
 import { Images } from '../../Themes'
 let crypto = require('crypto');
 let bip39 = require('bip39')
@@ -39,12 +40,10 @@ export default class RegisterScreen extends Component {
 
   componentDidMount() {
     // Get a key (if one exists) and rerender
-    // this.getKey()
-    // this.generateKey()
-    // .then(() => { return this.getKey() })
-    // .then((exists) => {
-    //   this.forceUpdate()
-    // })
+    this.getKey()
+    .then((exists) => {
+      this.forceUpdate()
+    })
   }
 
   // Generate a mnemonic/key via BIP39
@@ -244,10 +243,10 @@ export default class RegisterScreen extends Component {
       )
     } else if (this.state.enter_phrase && this.state.phrase_matches == false) {
       return this.renderEnterPhrase()
-    } else if (!this.state.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
+    } else if (!this.state.m && !this.state.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      return;
+      return (<LaunchScreen/>);
     }
   }
 
