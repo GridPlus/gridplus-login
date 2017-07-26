@@ -1,6 +1,6 @@
 import { StackNavigator } from 'react-navigation'
 import LaunchScreen from '../Containers/LaunchScreen'
-import SetupScreen from '../Containers/Setup/SetupScreen'
+import SetupScreen from '../Containers/Screens/SetupScreen'
 
 import styles from './Styles/NavigationStyles'
 

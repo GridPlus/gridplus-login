@@ -1,17 +1,15 @@
+// This is the main landing screen for users who have already set up their keys
+
 import React, { Component } from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
 import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
 import ButtonBox from './Components/ButtonBox'
 import RoundedButton from '../Components/RoundedButton'
 import { Images } from '../Themes'
-import SetupScreen from './Setup/SetupScreen'
-import {Grid, Col} from 'react-native-elements';
+import SetupScreen from './Screens/SetupScreen'
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
-
-
-// THIS IS DEPRECATED. It should redirect to the main "devscreens" page
 
 export default class LaunchScreen extends Component {
   render () {
