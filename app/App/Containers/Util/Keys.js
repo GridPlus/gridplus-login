@@ -14,6 +14,7 @@ const KEY_PATH = fs.BASE_DIR + '/keystore'
 
 exports.generateKey = generateKey;
 exports.getKey = getKey;
+exports.hash = hash;
 
 // Generate a mnemonic/key via BIP39. Returns the mnemonic if generated.
 function generateKey() {
@@ -31,7 +32,7 @@ function generateKey() {
       let ts = new Date().getTime()
       stuff.push(ts.toString(16))
       let s = stuff.join("")
-      let h = crypto.createHash('sha256').update(s).digest("hex")
+      let h = hash(s)
       // Create BIP39 mnemonic
       // Slice the hash to drop seed phrase size from 24 -> 12
       m = bip39.entropyToMnemonic(h.substr(0,32))
@@ -41,6 +42,10 @@ function generateKey() {
     .then((success) => { resolve(m); })
     .catch((err) => { reject(err); });
   })
+}
+
+function hash(s) {
+  return crypto.createHash('sha256').update(s).digest("hex");
 }
 
 // See if a key exists. Returns the mnemonic or null

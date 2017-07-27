@@ -52,7 +52,7 @@ export default class RegisterScreen extends Component {
         <RoundedButton
           onPress={() => {
             // TODO: Look up on Ethereum to see if this has been whitelisted
-            let pass = false;
+            let pass = Device.lookupSerial(this.state.s);
             if (!pass) {
               this.state.serial_error = true;
             } else {

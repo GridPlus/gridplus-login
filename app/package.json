@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,events,process,stream,vm --hack",
+    "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,http,https,events,net,path,process,stream,tls,vm --hack",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean --force",
@@ -32,10 +32,17 @@
     "bip39": "^2.3.1",
     "bluebird": "^3.5.0",
     "browserify-sign": "^4.0.4",
+    "browserify-zlib": "^0.1.4",
     "buffer": "^3.6.0",
+    "ethereumjs-util": "^5.1.2",
+    "ethjs-provider-http": "^0.1.6",
+    "ethjs-query": "^0.2.6",
     "events": "^1.1.1",
     "format-json": "^1.0.3",
+    "https-browserify": "0.0.1",
+    "js-sha3": "^0.6.1",
     "lodash": "^4.17.2",
+    "path-browserify": "0.0.0",
     "process": "^0.11.10",
     "prop-types": "^15.5.10",
     "querystringify": "0.0.4",
@@ -49,7 +56,9 @@
     "react-native-drawer": "^2.3.0",
     "react-native-elements": "^0.15.0",
     "react-native-fs": "^2.3.3",
+    "react-native-http": "github:tradle/react-native-http#834492d",
     "react-native-randombytes": "^2.2.0",
+    "react-native-tcp": "^2.0.4",
     "react-native-vector-icons": "^4.2.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "^5.0.2",
@@ -62,6 +71,7 @@
     "steam": "^1.4.0",
     "stream-browserify": "^1.0.0",
     "string_decoder": "^1.0.3",
+    "url": "^0.10.3",
     "vm-browserify": "0.0.4",
     "watchman": "^0.1.8"
   },
@@ -127,7 +137,12 @@
     "_stream_writable": "readable-stream/writable",
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
+    "stream": "stream-browserify",
+    "http": "react-native-http",
+    "https": "https-browserify",
+    "zlib": "browserify-zlib",
+    "net": "react-native-tcp",
+    "path": "path-browserify"
   },
   "browser": {
     "crypto": "react-native-crypto",
@@ -137,6 +152,11 @@
     "_stream_writable": "readable-stream/writable",
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
+    "stream": "stream-browserify",
+    "http": "react-native-http",
+    "https": "https-browserify",
+    "zlib": "browserify-zlib",
+    "net": "react-native-tcp",
+    "path": "path-browserify"
   }
 }
