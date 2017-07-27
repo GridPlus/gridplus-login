@@ -35,8 +35,8 @@ function getSerial() {
 // Returns true if it has been whitelisted by grid+
 function lookupSerial(s) {
   return new Promise((resolve, reject) => {
-    let hash = keys.sha3(s);
-    api.get(api.BASE + '/Registry')
+    let hash = sha3(s);
+    api.get('/Registry')
     .then((registry_addr) => {
       let data = `0x5524d548${config.zfill(s)}`
       return config.eth.call({ to: registry_addr, data: data})

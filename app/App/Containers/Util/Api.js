@@ -3,8 +3,8 @@ var Promise = require('bluebird').Promise;
 var config = require('../../../config.js');
 var http = require('http');
 
-exports.BASE = config.api.base_url;
-exports.PORT = config.api.port;
+let BASE = config.api.base_url;
+let PORT = config.api.port;
 exports.get = get;
 exports.post = post;
 
@@ -17,17 +17,6 @@ import '../../../shim.js'
  * @param  {String} url     description
  * @param  {Object} headers (optional)
  */
-/*function get(url, headers) {
-  return new Promise((resolve, reject) => {
-    let req = { url: url };
-    if (headers) { req.headers = headers; }
-    request.get(req, (err, res, body) => {
-      if (err) { reject(err); }
-      else if(res.statusCode != 200) { reject(`${res.statusCode} status code returned.`) }
-      else { resolve(JSON.parse(body)) }
-    })
-  })
-}*/
 function get(url, headers) {
   return new Promise((resolve, reject) => {
     var options = {
@@ -51,17 +40,7 @@ function get(url, headers) {
  * @param  {Object} body    description
  * @param  {Object} headers (optional)
  */
-/*function post(url, body, headers) {
-  return new Promise((resolve, reject) => {
-    let req = { url: url, form: body };
-    if (headers) { req.headers = headers; }
-    request.post(req, function(err, res, body) {
-      if (err) { reject(err); }
-      else if(res.statusCode != 200) { reject(`${res.statusCode} status code returned.`) }
-      else { resolve(JSON.parse(body)) }
-    })
-  })
-}*/
+
 function post(url, headers, data) {
   return new Promise((resolve, reject) => {
     var options = {
