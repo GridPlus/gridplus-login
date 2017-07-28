@@ -51,15 +51,16 @@ export default class RegisterScreen extends Component {
         <FormInput onChangeText={(text) => { this.state.s = text;} }/>
         <RoundedButton
           onPress={() => {
-            // TODO: Look up on Ethereum to see if this has been whitelisted
             Device.lookupSerial(this.state.s)
             .then((pass) => {
+              // TODO: take this out when the contracts are set up on INFURAnet
+              pass = true
               if (!pass) {
                 this.state.serial_error = true;
               } else {
                 this.state.serial_entered = true;
               }
-              this.forceUpdate();              
+              this.forceUpdate();
             })
           }}
         >
@@ -70,10 +71,10 @@ export default class RegisterScreen extends Component {
   }
 
   renderContent() {
-    if (!this.state.s || !this.state.serial_entered || !this.state.serial_error) {
+    if (!this.state.s || !this.state.serial_entered || this.state.serial_error) {
       return this.renderEnterSerial()
     } else {
-      return;
+      return (<LaunchScreen/>)
     }
   }
 
