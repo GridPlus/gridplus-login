@@ -1,7 +1,7 @@
 // Util functions for interacting with the Grid+ hub API
 var Promise = require('bluebird').Promise;
 var config = require('../../../config.js');
-var http = require('http');
+var https = require('https');
 
 let BASE = config.api.base_url;
 let PORT = config.api.port;
@@ -24,9 +24,9 @@ function get(url, headers) {
       port: PORT,
       path: url,
       method: 'GET',
-      headers: headers
     };
-
+    if (headers) { options.headers = headers; }
+    console.log('request', options)
     request(options)
     .then((body) => { resolve(body); })
     .catch((err) => { reject(err); })
@@ -61,7 +61,7 @@ function post(url, headers, data) {
 function request(options, data) {
   return new Promise((resolve, reject) => {
 
-    var req = http.request(options, function(res) {
+    var req = https.request(options, function(res) {
       if (res.statusCode < 200 || res.statusCode >= 300) {
         return reject(new Error('statusCode=' + res.statusCode));
       }
@@ -69,6 +69,7 @@ function request(options, data) {
       res.on('data', function(chunk) { body.push(chunk); });
 
       res.on('end', function() {
+        console.log('body?', Buffer.concat(body).toString())
         try { body = JSON.parse(Buffer.concat(body).toString()); }
         catch(e) { reject(e); }
         resolve(body);
