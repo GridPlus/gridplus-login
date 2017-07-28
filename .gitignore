@@ -1,3 +1,6 @@
+app/Tests
+app/android
+app/ignite
 app/node_modules
 app/ios/build
 app/android/build
