@@ -19,6 +19,7 @@ import styles from '../Styles/LaunchScreenStyles'
 export default class RegisterScreen extends Component {
 
   state = {
+    tmp: null,
     s: null,
     serial_error: false,
     serial_entered: false,
@@ -28,8 +29,8 @@ export default class RegisterScreen extends Component {
     // Get a key (if one exists) and rerender
     Device.getSerial()
     .then((s) => {
-      console.log('s', s)
-      this.state.s = s
+      this.state.s = s;
+      this.forceUpdate();
     })
   }
 
@@ -48,17 +49,19 @@ export default class RegisterScreen extends Component {
         <Text style={Styles.centerText}>This number is printed on your agent's box and may contain letters. Please enter it as it is printed.</Text>
         {this.renderEnterSerialError()}
         <FormLabel>Serial Number:</FormLabel>
-        <FormInput onChangeText={(text) => { this.state.s = text;} }/>
+        <FormInput onChangeText={(text) => { this.state.tmp = text;} }/>
         <RoundedButton
           onPress={() => {
             Device.lookupSerial(this.state.s)
             .then((pass) => {
               // TODO: take this out when the contracts are set up on INFURAnet
-              pass = true
+              // pass = true
               if (!pass) {
                 this.state.serial_error = true;
               } else {
+                this.state.serial_error = false;
                 this.state.serial_entered = true;
+                this.state.s = this.state.tmp;
               }
               this.forceUpdate();
             })
@@ -71,7 +74,7 @@ export default class RegisterScreen extends Component {
   }
 
   renderContent() {
-    if (!this.state.s || !this.state.serial_entered || this.state.serial_error) {
+    if (!this.state.s && (!this.state.serial_entered || this.state.serial_error)) {
       return this.renderEnterSerial()
     } else {
       return (<LaunchScreen/>)

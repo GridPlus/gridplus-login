@@ -26,7 +26,6 @@ function get(url, headers) {
       method: 'GET',
     };
     if (headers) { options.headers = headers; }
-    console.log('request', options)
     request(options)
     .then((body) => { resolve(body); })
     .catch((err) => { reject(err); })
@@ -69,7 +68,6 @@ function request(options, data) {
       res.on('data', function(chunk) { body.push(chunk); });
 
       res.on('end', function() {
-        console.log('body?', Buffer.concat(body).toString())
         try { body = JSON.parse(Buffer.concat(body).toString()); }
         catch(e) { reject(e); }
         resolve(body);

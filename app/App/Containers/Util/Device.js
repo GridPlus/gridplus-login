@@ -36,8 +36,6 @@ function getSerial() {
 function lookupSerial(s) {
   return new Promise((resolve, reject) => {
     let hash = sha3(s);
-    console.log('getting hash of', s)
-    console.log('hash', hash)
     api.get('/Registry')
     .then((res) => {
       let data = `0x5524d548${config.zfill(hash)}`
@@ -45,8 +43,9 @@ function lookupSerial(s) {
       return config.eth.call({ to: registry_addr, data: data})
     })
     .then((is_registered) => {
-      console.log('is_registered', is_registered);
-      if (parseInt(is_registered) && parseInt(is_registered) == 1) { resolve(true); }
+      if (parseInt(is_registered) && parseInt(is_registered) == 1) {
+        return saveSerial(s).then(() => { resolve(true) });
+      }
       else { resolve(false); }
     })
     .catch((err) => { reject(err); })
