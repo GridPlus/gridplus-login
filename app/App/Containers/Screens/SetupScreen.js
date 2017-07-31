@@ -173,7 +173,9 @@ export default class RegisterScreen extends Component {
     } else if (!this.state.m && !this.state.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      return (<RegisterDeviceScreen/>);
+      this.props.navigation.navigate('RegisterDevice');
+      return;
+      //return (<RegisterDeviceScreen/>);
     }
   }
 

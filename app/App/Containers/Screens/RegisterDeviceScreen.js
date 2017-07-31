@@ -77,7 +77,8 @@ export default class RegisterScreen extends Component {
     if (!this.state.s && (!this.state.serial_entered || this.state.serial_error)) {
       return this.renderEnterSerial()
     } else {
-      return (<LaunchScreen/>)
+      this.props.navigation.navigate('LaunchScreen');
+      return;
     }
   }
 
