@@ -21,6 +21,7 @@ const images = {
   backButton: require('../Images/Icons/back-button.png'),
   closeButton: require('../Images/Icons/close-button.png'),
 
+  agent: require('../Images/agent.png'),
   coloredLogo: require('../Images/Logo/color.jpg'),
 }
 

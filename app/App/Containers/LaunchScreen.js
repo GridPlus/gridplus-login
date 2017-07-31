@@ -28,7 +28,6 @@ export default class LaunchScreen extends Component {
   componentDidMount() {
     const { navigate } = this.props.navigation;
     this.state.navigate = navigate;
-    console.log('navigate', navigate)
     Keys.getKey()
     .then((key) => {
       this.state.m = key;
@@ -40,6 +39,8 @@ export default class LaunchScreen extends Component {
       else if (!this.state.s) { this.state.navigate('RegisterDevice')}
     })
   }
+
+  openDevices() { this.state.navigate('Devices')}
 
   render () {
     this.state.navigate = this.props.navigation.navigate;

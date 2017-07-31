@@ -12,6 +12,10 @@ export default StyleSheet.create({
     width: Metrics.images.logo,
     resizeMode: 'contain'
   },
+  agent: {
+    height: 200,
+    width: 200,
+  },
   centered: {
     alignItems: 'center'
   }

@@ -71,7 +71,7 @@ const ApplicationStyles = {
     marginTop: Metrics.smallMargin,
     marginHorizontal: Metrics.baseMargin,
     borderWidth: 1,
-    borderColor: Colors.ember,
+    borderColor: 'Colors.ember',
     alignItems: 'center',
     textAlign: 'center'
   }
