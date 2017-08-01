@@ -47,6 +47,7 @@ export default class LaunchScreen extends Component {
     })
     .then((device) => {
       this.state.device_addr = device;
+      console.log('this.state.owner_addr', this.state.owner_addr)
       if (!this.state.owner_addr) { this.state.navigate('Setup'); }
       else if (!this.state.s || !this.state.device_addr) { this.state.navigate('RegisterDevice')}
     })

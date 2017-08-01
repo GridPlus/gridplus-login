@@ -37,15 +37,19 @@ function getSerial() {
 // a wallet address.
 function getDeviceAddr(registry, serial, owner) {
   return new Promise((resolve, reject) => {
-    // Get the wallet address of this device
-    // ABI get_owner_wallet(bytes32,address)
-    let data = `0x5934df54${config.zfill(sha3(serial))}${config.zfill(owner)}`
-    config.eth.call({ to: registry, data: data })
-    .then((addr) => {
-      if (addr == '0x') { resolve(null); }
-      else { resolve(addr); }
-    })
-    .catch((err) => { reject(err); })
+    // Soft failure because there will be many cases where this is true
+    if (!registry || !serial || !owner) { resolve(null) }
+    else {
+      // Get the wallet address of this device
+      // ABI get_owner_wallet(bytes32,address)
+      let data = `0x5934df54${config.zfill(sha3(serial))}${config.zfill(owner)}`
+      config.eth.call({ to: registry, data: data })
+      .then((addr) => {
+        if (addr == '0x') { resolve(null); }
+        else { resolve(addr); }
+      })
+      .catch((err) => { reject(err); })
+    }
   })
 }
 

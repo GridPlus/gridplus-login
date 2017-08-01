@@ -67,7 +67,10 @@ function getKey() {
 function getAddress() {
   return new Promise((resolve, reject) => {
     getKey()
-    .then((m) => { resolve(address(m)); })
+    .then((m) => {
+      if (!m) { resolve(null) }
+      else { resolve(address(m)); }
+    })
     .catch((err) => { reject(err); })
   })
 }
