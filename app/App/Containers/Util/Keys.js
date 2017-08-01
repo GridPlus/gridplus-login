@@ -1,13 +1,15 @@
 // Functions for extracting and saving keys from/to disk
 let crypto = require('crypto');
-let bip39 = require('bip39')
+let bip39 = require('bip39');
+var elliptic = require('elliptic');
+const secp256k1 = new (elliptic.ec)('secp256k1');
 let ethutil = require('ethjs-account');
 let Promise = require('bluebird').Promise;
 let ifs = require('react-native-fs');
 let wordlist = require('../Setup/bip_39_words.json');
 let fs = require('./Fs.js');
-let unorm = require('unorm');
-let Buffer = require('buffer/').Buffer;
+let sha3 = require('js-sha3').keccak256;
+
 // Import this thing as a hack to get react-native-crypto to import :(
 import '../../../shim.js'
 
@@ -62,21 +64,13 @@ function getKey() {
 
 // Get the Ethereum address of a saved mnemonic
 function address(mnemonic) {
-  console.log('mnemonic', mnemonic)
-  // var mnemonicBuffer = Buffer.from(unorm.nfkd(mnemonic), 'utf8')
-  // var saltBuffer = Buffer.from(salt(unorm.nfkd(password)), 'utf8')
-
-  let tmp = mnemonic.split(' ').slice(0, 10)
-  let tmp2 = tmp.join(' ')
-  console.log('tmp', tmp)
-  console.log('tmp2', tmp2)
-  let priv = bip39.mnemonicToSeedHex(mnemonic)
-  console.log('priv', priv)
-  let pbuf = Buffer.from(priv.slice(2, 64), 'hex')
-  // let pub = (Buffer.from(secp256k1.keyFromPrivate(Buffer.from(priv.slice(2), 'hex')).getPublic(false, 'hex'), 'hex')).slice(1)
-  // console.log('pub', pub)
-  // let addr = ethutil.pubToAddress(pub)
-  let addr = 'tmp'
+  // Convert seed mnemonic to private key via BIP39
+  let priv = '0x'+bip39.mnemonicToSeedHex(mnemonic)
+  // Convert to a buffer and derive public key via secp256k1
+  let pbuf = Buffer.from(priv)
+  let pub = secp256k1.keyFromPrivate(pbuf).getPublic(false, 'hex')
+  // Hash public key and shave off first 12 characters
+  let addr = '0x'+sha3('0x'+pub).slice(12).toString('hex')
   return addr;
 }
 
