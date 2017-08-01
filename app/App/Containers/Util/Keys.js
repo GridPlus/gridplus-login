@@ -1,11 +1,13 @@
 // Functions for extracting and saving keys from/to disk
 let crypto = require('crypto');
 let bip39 = require('bip39')
+let ethutil = require('ethjs-account');
 let Promise = require('bluebird').Promise;
 let ifs = require('react-native-fs');
 let wordlist = require('../Setup/bip_39_words.json');
 let fs = require('./Fs.js');
-
+let unorm = require('unorm');
+let Buffer = require('buffer/').Buffer;
 // Import this thing as a hack to get react-native-crypto to import :(
 import '../../../shim.js'
 
@@ -15,6 +17,7 @@ const KEY_PATH = fs.BASE_DIR + '/keystore'
 exports.generateKey = generateKey;
 exports.getKey = getKey;
 exports.hash = hash;
+exports.address = address;
 
 // Generate a mnemonic/key via BIP39. Returns the mnemonic if generated.
 function generateKey() {
@@ -55,6 +58,26 @@ function getKey() {
     .then((m) => { resolve(m); })
     .catch((err) => { resolve(null); })
   })
+}
+
+// Get the Ethereum address of a saved mnemonic
+function address(mnemonic) {
+  console.log('mnemonic', mnemonic)
+  // var mnemonicBuffer = Buffer.from(unorm.nfkd(mnemonic), 'utf8')
+  // var saltBuffer = Buffer.from(salt(unorm.nfkd(password)), 'utf8')
+
+  let tmp = mnemonic.split(' ').slice(0, 10)
+  let tmp2 = tmp.join(' ')
+  console.log('tmp', tmp)
+  console.log('tmp2', tmp2)
+  let priv = bip39.mnemonicToSeedHex(mnemonic)
+  console.log('priv', priv)
+  let pbuf = Buffer.from(priv.slice(2, 64), 'hex')
+  // let pub = (Buffer.from(secp256k1.keyFromPrivate(Buffer.from(priv.slice(2), 'hex')).getPublic(false, 'hex'), 'hex')).slice(1)
+  // console.log('pub', pub)
+  // let addr = ethutil.pubToAddress(pub)
+  let addr = 'tmp'
+  return addr;
 }
 
 // Check a user-entered phrase against a wordlist.

@@ -6,7 +6,13 @@ import { ScrollView, Text, Image, View } from 'react-native'
 import { Button, Card } from 'react-native-elements'
 import RoundedButton from '../../Components/RoundedButton'
 import { Images } from '../../Themes'
+
+// Local imports
 var Device = require('../Util/Device.js');
+var Keys = require('../Util/Keys.js');
+var Api = require('../Util/Api.js');
+let config = require('../../../config.js');
+let sha3 = require('js-sha3').keccak256;
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
@@ -23,11 +29,20 @@ export default class DevicesScreen extends Component {
   }
 
   componentDidMount() {
+    let serial;
     Device.getSerial()
     .then((s) => {
-      console.log('serial', s)
-      this.state.devices.push(s)
-      console.log('this.state.devices', this.state.devices)
+      serial = s;
+      return Keys.getKey();
+    })
+    .then((mnemonic) => {
+      // get_owner_wallet(bytes32 serial_hash, address owner)
+      let data = `0x5934df54${config.zfill(sha3(serial))}`
+      let addr = Keys.address(mnemonic)
+      // getBalance(address)
+      //let data = `0x70a08231${config.zfill()}`
+
+      this.state.devices.push(serial)
       this.forceUpdate();
     })
   }

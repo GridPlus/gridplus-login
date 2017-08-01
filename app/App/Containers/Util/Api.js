@@ -11,6 +11,10 @@ exports.post = post;
 // For Buffer node module
 import '../../../shim.js'
 
+
+// HTTP functions
+//==========================================
+
 /**
  * Make a get request to the API. Returns the body of the response.
  *
