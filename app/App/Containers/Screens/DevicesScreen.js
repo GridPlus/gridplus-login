@@ -30,21 +30,44 @@ export default class DevicesScreen extends Component {
 
   componentDidMount() {
     let serial;
+    let owner_addr;
+    let registry_addr;
+    let bolt_addr;
+    let device_addr;
+    let bolt_balance;
+
     Device.getSerial()
     .then((s) => {
       serial = s;
       return Keys.getKey();
     })
     .then((mnemonic) => {
-      // get_owner_wallet(bytes32 serial_hash, address owner)
-      let data = `0x5934df54${config.zfill(sha3(serial))}`
-      let addr = Keys.address(mnemonic)
-      // getBalance(address)
-      //let data = `0x70a08231${config.zfill()}`
-
-      this.state.devices.push(serial)
-      this.forceUpdate();
+      owner_addr = Keys.address(mnemonic)
+      return Api.get('/Registry')
     })
+    .then((registry) => {
+      console.log('registry_addr', registry)
+      registry_addr = registry.result;
+      return Device.getDeviceAddr(serial, owner_addr)
+    })
+    .then((wallet_addr) => {
+      device_addr = wallet_addr;
+      // Get the BOLT address
+      return Api.get('/BOLT')
+    })
+    .then((bolt) => {
+      console.log('bolt_addr', bolt)
+      // Get the BOLT balance
+      bolt_addr = bolt.result;
+      // ABI getBalance(address)
+      let data = `0x70a08231${config.zfill(device_addr)}`
+      return config.eth.call({ to: registry_addr, data: data })
+    })
+    .then((balance) => {
+      bolt_balance = balance;
+      console.log('bolt_balance', bolt_balance)
+    })
+    .catch((err) => { console.log('ERROR:', err)})
   }
 
   renderDeviceList() {

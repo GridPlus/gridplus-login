@@ -11,6 +11,7 @@ const SERIAL_PATH = fs.BASE_DIR + '/serial'
 
 exports.saveSerial = saveSerial;
 exports.getSerial = getSerial;
+exports.getDeviceAddr = getDeviceAddr;
 exports.lookupSerial = lookupSerial;
 
 // Given a serial number input by the user, save it to disk
@@ -27,6 +28,23 @@ function getSerial() {
   return new Promise((resolve, reject) => {
     fs.read(SERIAL_PATH)
     .then((data) => { resolve(data); })
+    .catch((err) => { reject(err); })
+  })
+}
+
+// Get the address of the device.
+// Returns the device address or 'null' if the device has not yet registered
+// a wallet address.
+function getDeviceAddr(registry, serial, owner) {
+  return new Promise((resolve, reject) => {
+    // Get the wallet address of this device
+    // ABI get_owner_wallet(bytes32,address)
+    let data = `0x5934df54${config.zfill(sha3(serial))}${config.zfill(owner)}`
+    config.eth.call({ to: registry, data: data })
+    .then((addr) => {
+      if (addr == '0x') { resolve(null); }
+      else { resolve(addr); }
+    })
     .catch((err) => { reject(err); })
   })
 }

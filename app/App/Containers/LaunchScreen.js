@@ -13,6 +13,7 @@ import RegisterDeviceScreen from './Screens/RegisterDeviceScreen'
 import PrimaryNav from '../Navigation/AppNavigation.js'
 var Keys = require('./Util/Keys.js');
 var Device = require('./Util/Device.js');
+var Api = require('./Util/Api.js');
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
@@ -21,22 +22,33 @@ export default class LaunchScreen extends Component {
 
   state = {
     m: null,
+    owner_addr: null,
+    device_addr: null,
     s: null,
     navigate: null,
+    registry_addr: null,
   }
 
   componentDidMount() {
     const { navigate } = this.props.navigation;
     this.state.navigate = navigate;
-    Keys.getKey()
-    .then((key) => {
-      this.state.m = key;
+    Keys.getAddress()
+    .then((addr) => {
+      this.state.owner_addr = addr;
       return Device.getSerial()
     })
     .then((serial) => {
       this.state.s = serial;
-      if (!this.state.m) { this.state.navigate('Setup'); }
-      else if (!this.state.s) { this.state.navigate('RegisterDevice')}
+      return Api.get('/Registry')
+    })
+    .then((registry) => {
+      this.state.registry_addr = registry.result;
+      return Device.getDeviceAddr(this.stateregistry_addr, this.state.s, this.state.owner_addr)
+    })
+    .then((device) => {
+      this.state.device_addr = device;
+      if (!this.state.owner_addr) { this.state.navigate('Setup'); }
+      else if (!this.state.s || !this.state.device_addr) { this.state.navigate('RegisterDevice')}
     })
   }
 

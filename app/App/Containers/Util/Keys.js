@@ -18,6 +18,7 @@ const KEY_PATH = fs.BASE_DIR + '/keystore'
 
 exports.generateKey = generateKey;
 exports.getKey = getKey;
+exports.getAddress = getAddress;
 exports.hash = hash;
 exports.address = address;
 
@@ -59,6 +60,15 @@ function getKey() {
     fs.read(KEY_PATH)
     .then((m) => { resolve(m); })
     .catch((err) => { resolve(null); })
+  })
+}
+
+// Get the key and convert it to an address on the spot
+function getAddress() {
+  return new Promise((resolve, reject) => {
+    getKey()
+    .then((m) => { resolve(address(m)); })
+    .catch((err) => { reject(err); })
   })
 }
 
