@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react'
 import { ScrollView, Text, Image, View, TouchableOpacity } from 'react-native'
-import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
 import ButtonBox from './Components/ButtonBox'
 import RoundedButton from '../Components/RoundedButton'
 import { Images } from '../Themes'
@@ -51,7 +50,6 @@ export default class LaunchScreen extends Component {
     })
     .then((device) => {
       this.state.device_addr = device;
-      console.log('this.state.owner_address', this.state.owner_addr)
       if (!this.state.owner_addr ||
         params != undefined && (
           params.route == 'setup' &&
@@ -67,7 +65,7 @@ export default class LaunchScreen extends Component {
     })
   }
 
-  openDevices() { this.state.navigate('Devices')}
+  openDevices() { this.state.navigate('Devices') }
 
   render () {
     this.state.navigate = this.props.navigation.navigate;

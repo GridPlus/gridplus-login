@@ -82,8 +82,8 @@ function address(mnemonic) {
   // Convert to a buffer and derive public key via secp256k1
   let pbuf = Buffer.from(priv)
   let pub = secp256k1.keyFromPrivate(pbuf).getPublic(false, 'hex')
-  // Hash public key and shave off first 12 characters
-  let addr = '0x'+sha3('0x'+pub).slice(12).toString('hex')
+  // Hash public key and shave off first 24 characters (12 bytes)
+  let addr = '0x'+sha3('0x'+pub).slice(24).toString('hex')
   return addr;
 }
 

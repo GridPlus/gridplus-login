@@ -12,6 +12,7 @@ import { Button, Card } from 'react-native-elements'
 let Device = require('../Util/Device.js')
 let Keys = require('../Util/Keys.js')
 let Api = require('../Util/Api.js')
+let Eth = require('../Util/Eth.js')
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
 
@@ -53,6 +54,18 @@ export default class RegisterScreen extends Component {
     })
   }
 
+  // Form and sign a transaction
+  claimDevice(serial_hash) {
+    return new Promise((resolve, reject) => {
+      let { owner_addr, registry_addr, s } = this.state;
+      // Claim(bytes32)
+      let data = `0xbd6652${Keys.hash(s)}`;
+      let unsigned = Eth.formUnsigned(owner_addr, registry_addr, data)
+      console.log('unsigned', unsigned)
+      resolve(true);
+    })
+  }
+
   renderEnterSerialError() {
     let { params } = this.props.navigation.state;
     if (params && params.serial_error) {
@@ -83,6 +96,7 @@ export default class RegisterScreen extends Component {
                 this.state.serial_error = true;
                 navigate('LaunchScreen', this.state)
               } else {
+                return this.claimDevice()
                 navigate('LaunchScreen')
               }
             })
