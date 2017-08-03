@@ -54,34 +54,37 @@ export default class RegisterScreen extends Component {
   }
 
   renderEnterSerialError() {
-    if (this.state.serial_error) {
+    let { params } = this.props.navigation.state;
+    if (params && params.serial_error) {
       return (<Text style={Styles.errorText}>The serial number you entered did not match our records. Make sure you enter it exactly as it appears</Text>)
     } else {
       return;
     }
+    return
   }
 
   renderEnterSerial() {
+    let { params } = this.props.navigation.state;
+    let { navigate } = this.props.navigation;
     return (
       <View style={styles.section}>
-        <Text>This number is printed on your agent's box and may contain letters. Please enter it as it is printed.</Text>
+        <Text style={{marginBottom:20}}>This number is printed on your agent's box and may contain letters. Please enter it as it is printed.</Text>
         {this.renderEnterSerialError()}
         <FormLabel>Serial Number:</FormLabel>
         <FormInput onChangeText={(text) => { this.state.tmp = text;} }/>
         <RoundedButton
           onPress={() => {
+            this.state.s = this.state.tmp;
             Device.lookupSerial(this.state.s)
             .then((pass) => {
               // TODO: take this out when the contracts are set up on INFURAnet
               // pass = true
               if (!pass) {
                 this.state.serial_error = true;
+                navigate('LaunchScreen', this.state)
               } else {
-                this.state.serial_error = false;
-                this.state.serial_entered = true;
-                this.state.s = this.state.tmp;
+                navigate('LaunchScreen')
               }
-              this.forceUpdate();
             })
           }}
         >
@@ -101,18 +104,20 @@ export default class RegisterScreen extends Component {
   }
 
   renderContent() {
-    if (!this.state.device_addr) {
+    let { params } = this.props.navigation.state;
+    /*if (!this.state.device_addr) {
       return this.renderSetupDevice()
-    } else if (!this.state.s && (!this.state.serial_entered || this.state.serial_error)) {
-      return this.renderEnterSerial()
-    } else {
-      this.props.navigation.navigate('LaunchScreen');
+    } else */
+    if (params && params.serial_entered && !params.serial_error) {
       return;
+    } else {
+      return this.renderEnterSerial()
     }
   }
 
   render () {
-    if (this.state.device) { this.state.card_title = "Enter Serial Number" }
+    let { params } = this.props.navigation.state;
+    if (params && params.device) { this.state.card_title = "Enter Serial Number" }
     else { this.state.card_title = "Please Setup Device"}
     return (
       <View style={styles.mainContainer}>

@@ -3,13 +3,14 @@
 import React, { Component } from 'react'
 var Styles = require('../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
-import { Divider, FormLabel, FormInput } from 'react-native-elements'
+import { Button, Card, Divider, FormLabel, FormInput } from 'react-native-elements'
 import DevscreensButton from '../../../ignite/DevScreens/DevscreensButton.js'
 import RoundedButton from '../../Components/RoundedButton'
 // import LaunchScreen from '../LaunchScreen'
 import RegisterDeviceScreen from './RegisterDeviceScreen'
 import { Images } from '../../Themes'
 let Keys = require('../Util/Keys.js')
+let Fs = require('../Util/Fs.js')
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
@@ -20,6 +21,7 @@ import styles from '../Styles/LaunchScreenStyles'
 export default class RegisterScreen extends Component {
 
   state = {
+    route: 'setup',
     m: null,                      // The mnemonic, will be stored to disc
     seed_written: false,          // True if the user says she has written the seed down
     double_check: false,          // True after double check
@@ -30,14 +32,14 @@ export default class RegisterScreen extends Component {
   }
 
   componentDidMount() {
+    let { navigation } = this.props;
     // Get a key (if one exists) and rerender
     Keys.getKey()
     .then((m) => {
       this.state.m = m;
-      this.forceUpdate()
     })
+    .then(() => { this.forceUpdate() })
   }
-
 
   renderProceed() {
     if (!this.state.seed_written) {
@@ -59,7 +61,7 @@ export default class RegisterScreen extends Component {
         </View>
       );
     } else {
-      return;
+      this.props.navigation.navigate('RegisterDevice');
     }
   }
 
@@ -105,84 +107,91 @@ export default class RegisterScreen extends Component {
   renderEnterPhrase() {
     return (
       <View style={styles.section}>
-        {this.renderEnterPhraseError()}
-        <Text style={Styles.titleText}>Restore From Phrase</Text>
-        <FormLabel>Please enter the phrase you have previously generated:</FormLabel>
-        <FormInput onChangeText={(text) => { this.state.phrase[0] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[1] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[2] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[3] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[4] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[5] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[6] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[7] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[8] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[9] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[10] = text;} }/>
-        <FormInput onChangeText={(text) => { this.state.phrase[11] = text;} }/>
-        <RoundedButton
-          onPress={() => {
-            let pass = Keys.checkPhrase(this.state.phrase);
-            if (!pass) {
-              this.state.phrase_error = true;
-            } else {
-              this.state.phrase_matches = true;
-              this.state.mnemonic = this.state.phrase;
-            }
-            this.forceUpdate();}
-          }
-        >
-          Submit
-        </RoundedButton>
-        <RoundedButton onPress = {() => { this.state.enter_phrase = false; this.forceUpdate(); }}>
-          Back
-        </RoundedButton>
+        <Card title="Restore from Phrase">
+          {this.renderEnterPhraseError()}
+          <FormLabel>Please enter the phrase you have previously generated:</FormLabel>
+          <FormInput onChangeText={(text) => { this.state.phrase[0] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[1] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[2] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[3] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[4] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[5] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[6] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[7] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[8] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[9] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[10] = text;} }/>
+          <FormInput onChangeText={(text) => { this.state.phrase[11] = text;} }/>
+          <Button
+            title="Submit"
+            onPress={() => {
+              let pass = Keys.checkPhrase(this.state.phrase);
+              if (!pass) {
+
+                this.state.phrase_error = true;
+              } else {
+                this.state.phrase_matches = true;
+                this.state.mnemonic = this.state.phrase;
+              }
+              this.props.navigator.navigate('LaunchScreen', this.state);
+            }}
+          />
+          <Button
+            title="Back"
+            style={{marginTop: 20}}
+            onPress = {() => { this.state.enter_phrase = false; this.forceUpdate(); }}
+          />
+        </Card>
       </View>
     )
   }
 
   renderSetup() {
-    if (!this.state.m && !this.state.enter_phrase) {
+    let { navigation } = this.props;
+    let { navigate } = navigation;
+    let { params } = navigation.state;
+    if (!this.state.m) {
       return (
         <View>
-          <View style={styles.centered}>
-            <Image source={Images.coloredLogo} style={styles.logo} />
-          </View>
           <View style={styles.section} >
-            <Text style={Styles.titleText}>
-              Welcome.
-            </Text>
-            <Text style={styles.sectionText}>
-              Do you have a backup phrase already?
-            </Text>
-            <RoundedButton
-              onPress={() => { Keys.generateKey().then((m) => { this.state.m = m; this.forceUpdate(); }) } }
-            >
-              No, create one
-            </RoundedButton>
-            <RoundedButton
-              onPress={() => {this.state.enter_phrase = true; this.forceUpdate();} }
-            >
-              Yes
-            </RoundedButton>
+            <Card title="Welcome">
+              <Text style={{textAlign: 'center'}}>
+                Do you have a backup phrase already?
+              </Text>
+              <Button
+                style={{marginTop: 50, marginBottom: 20 }}
+                title="No, create one"
+                onPress={() => {
+                  Keys.generateKey()
+                  .then((m) => {
+                    this.state.m = m;
+                    navigate('LaunchScreen', this.state)
+                  })
+                }}
+              />
+              <Button
+                title="Yes"
+                onPress={() => {
+                  this.state.enter_phrase = true;
+                  navigate('LaunchScreen', this.state);
+                }}
+              />
+            </Card>
           </View>
         </View>
       )
-    } else if (this.state.enter_phrase && this.state.phrase_matches == false) {
+    } else if (params.enter_phrase && params.phrase_matches == false) {
       return this.renderEnterPhrase()
-    } else if (!this.state.m && !this.state.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
+    } else if (!params.enter_phrase && (!params.seed_written || !params.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      this.props.navigation.navigate('RegisterDevice');
-      return;
-      //return (<RegisterDeviceScreen/>);
+      navigate('RegisterDevice')
     }
   }
 
   render () {
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
         <ScrollView style={styles.container}>
           {this.renderSetup()}
         </ScrollView>

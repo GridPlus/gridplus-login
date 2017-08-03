@@ -14,6 +14,7 @@ import PrimaryNav from '../Navigation/AppNavigation.js'
 var Keys = require('./Util/Keys.js');
 var Device = require('./Util/Device.js');
 var Api = require('./Util/Api.js');
+var Fs = require('./Util/Fs.js');
 
 // Styles
 import styles from './Styles/LaunchScreenStyles'
@@ -30,7 +31,10 @@ export default class LaunchScreen extends Component {
   }
 
   componentDidMount() {
-    const { navigate } = this.props.navigation;
+    const { navigation }  = this.props;
+    const { navigate } = navigation;
+    const { params } = navigation.state;
+    console.log('launchscreen params', params)
     this.state.navigate = navigate;
     Keys.getAddress()
     .then((addr) => {
@@ -47,9 +51,19 @@ export default class LaunchScreen extends Component {
     })
     .then((device) => {
       this.state.device_addr = device;
-      console.log('this.state.owner_addr', this.state.owner_addr)
-      if (!this.state.owner_addr) { this.state.navigate('Setup'); }
-      else if (!this.state.s || !this.state.device_addr) { this.state.navigate('RegisterDevice')}
+      console.log('this.state.owner_address', this.state.owner_addr)
+      if (!this.state.owner_addr ||
+        params != undefined && (
+          params.route == 'setup' &&
+          (params.enter_phrase && !params.phrase_matches) ||
+          (params.enter_phrase === false && (!params.seed_written || !params.double_check))
+        )
+      ) {
+        navigate('Setup', params)
+      }
+      else if (!this.state.s || !this.state.device_addr) {
+        navigate('RegisterDevice', params)
+      }
     })
   }
 
