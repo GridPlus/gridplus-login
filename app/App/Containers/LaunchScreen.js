@@ -33,7 +33,6 @@ export default class LaunchScreen extends Component {
     const { navigation }  = this.props;
     const { navigate } = navigation;
     const { params } = navigation.state;
-    console.log('launchscreen params', params)
     this.state.navigate = navigate;
     Keys.getAddress()
     .then((addr) => {

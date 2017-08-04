@@ -18,6 +18,7 @@ const KEY_PATH = fs.BASE_DIR + '/keystore'
 
 exports.generateKey = generateKey;
 exports.getKey = getKey;
+exports.getPrivateKey = getPrivateKey;
 exports.getAddress = getAddress;
 exports.hash = hash;
 exports.address = address;
@@ -63,6 +64,18 @@ function getKey() {
   })
 }
 
+// Get the raw private key (hex string)
+function getPrivateKey() {
+  return new Promise((resolve, reject) => {
+    fs.read(KEY_PATH)
+    .then((m) => {
+      let priv = '0x'+bip39.mnemonicToSeedHex(m).substr(0, 64)
+      resolve(priv);
+    })
+    .catch((err) => { reject(err); })
+  })
+}
+
 // Get the key and convert it to an address on the spot
 function getAddress() {
   return new Promise((resolve, reject) => {
@@ -78,7 +91,7 @@ function getAddress() {
 // Get the Ethereum address of a saved mnemonic
 function address(mnemonic) {
   // Convert seed mnemonic to private key via BIP39
-  let priv = '0x'+bip39.mnemonicToSeedHex(mnemonic)
+  let priv = '0x'+bip39.mnemonicToSeedHex(mnemonic).substr(0, 64)
   // Convert to a buffer and derive public key via secp256k1
   let pbuf = Buffer.from(priv)
   let pub = secp256k1.keyFromPrivate(pbuf).getPublic(false, 'hex')

@@ -25,6 +25,7 @@ export default class RegisterScreen extends Component {
     tmp: null,
     s: null,
     serial_error: false,
+    tx_error: false,
     serial_entered: false,
     no_wallet: false,
     device_addr: null,
@@ -60,9 +61,21 @@ export default class RegisterScreen extends Component {
       let { owner_addr, registry_addr, s } = this.state;
       // Claim(bytes32)
       let data = `0xbd6652${Keys.hash(s)}`;
-      let unsigned = Eth.formUnsigned(owner_addr, registry_addr, data)
-      console.log('unsigned', unsigned)
-      resolve(true);
+      let unsigned;
+      Eth.formUnsigned(owner_addr, registry_addr, data)
+      .then((_unsigned) => {
+        unsigned = _unsigned;
+        console.log('unsigned', unsigned)
+        return Keys.getPrivateKey()
+      })
+      .then((p) => {
+        return Eth.submitTx(unsigned, p)
+      })
+      .then((receipt) => {
+        console.log('receipt', receipt)
+        resolve(true)
+      })
+      .catch((err) => { reject(err) })
     })
   }
 
@@ -97,7 +110,8 @@ export default class RegisterScreen extends Component {
                 navigate('LaunchScreen', this.state)
               } else {
                 return this.claimDevice()
-                navigate('LaunchScreen')
+                .then(() => { navigate('LaunchScreen') })
+                .catch((err) => { console.log('err', err); this.state.tx_error = true; navigate('LaunchScreen', this.state) })
               }
             })
           }}
