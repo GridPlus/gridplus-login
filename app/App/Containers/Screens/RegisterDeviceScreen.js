@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 var Styles = require('../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
 import { Divider, FormLabel, FormInput } from 'react-native-elements'
-import DevscreensButton from '../../../ignite/DevScreens/DevscreensButton.js'
 import RoundedButton from '../../Components/RoundedButton'
 import LaunchScreen from '../LaunchScreen'
 import { Images } from '../../Themes'
