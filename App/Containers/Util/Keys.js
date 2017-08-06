@@ -52,7 +52,7 @@ function generateKey() {
 }
 
 function hash(s) {
-  return crypto.createHash('sha256').update(s).digest("hex");
+  sha3(s)
 }
 
 // See if a key exists. Returns the mnemonic or null
