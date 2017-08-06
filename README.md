@@ -13,6 +13,6 @@ Note that only the iOS version is under development right now
 
 ```
 npm run install
-npm run postinstall
+react-native link
 npm run ios
 ```
