@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,http,https,events,net,path,process,stream,vm --hack",
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "postinstall": "rn-nodeify --install assert,buffer,crypto,http,https,events,net,path,process,stream,vm --hack",
+    "start": "react-native start",
     "test": "jest",
-    "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean --force",
+    "clean": "rm -rf node_modules && rm -rf ./ios/build/ModuleCache && rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean --force",
     "clean:android": "cd android/ && ./gradlew clean && cd .. && react-native run-android",
     "newclear": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf ios/build && rm -rf node_modules/ && npm cache clean --force && npm i",
     "test:watch": "jest --watch",
