@@ -26,7 +26,6 @@ function write(path, data, encoding) {
 
 function read(path) {
   return new Promise((resolve, reject) => {
-    console.log('bas_dir', ifs.DocumentDirectoryPath)
     ifs.exists(path)
     .then((exists) => {
       if (exists) { return ifs.readFile(path) }
@@ -77,7 +76,7 @@ function writeState(obj) {
 function readState() {
   return new Promise((resolve, reject) => {
     read(STATE_PATH)
-    .then((state) => { console.log('STATE?', state); resolve(JSON.parse(state)) })
+    .then((state) => { resolve(JSON.parse(state)) })
     .catch((err) => { reject(err) })
   })
 }

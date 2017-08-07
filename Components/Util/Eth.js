@@ -37,6 +37,8 @@ exports.formUnsigned = function(from, to, data, _gas, _gasPrice, _value) {
 
 exports.submitTx = function(unsigned, privateKey) {
   return new Promise((resolve, reject) => {
+    console.log('unsigned', unsigned)
+    console.log('privatekey', privateKey)
     let raw = signer.sign(unsigned, privateKey);
     console.log('raw', raw)
     config.eth.sendRawTransaction(raw)
