@@ -1,6 +1,6 @@
 // Filesystem util Functions
 let Promise = require('bluebird').Promise;
-let ifs = {}//require('react-native-fs');
+let ifs = require('react-native-fs');
 
 exports.write = write;
 exports.read = read;

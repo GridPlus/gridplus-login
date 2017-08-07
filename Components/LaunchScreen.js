@@ -12,7 +12,6 @@ var Fs = require('./Util/Fs.js');
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
-
 import PrimaryNav from '../Navigation/AppNavigation.js'
 
 
@@ -27,7 +26,7 @@ export default class LaunchScreen extends Component {
     registry_addr: null,
   }
 
-  componentDidMount() {
+  /*componentDidMount() {
     const { navigation }  = this.props;
     const { navigate } = navigation;
     const { params } = navigation.state;
@@ -62,11 +61,11 @@ export default class LaunchScreen extends Component {
         x=2
       }
     })
-  }
+  }*/
 
   //openDevices() { this.state.navigate('Devices') }
 
-  render () {
+  /*render () {
     this.state.navigate = this.props.navigation.navigate;
     return (
       <View style={styles.mainContainer}>
@@ -82,5 +81,8 @@ export default class LaunchScreen extends Component {
         </ScrollView>
       </View>
     )
+  }*/
+  render () {
+    return (<Text>wassup</Text>)
   }
 }

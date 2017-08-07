@@ -1,14 +1,14 @@
 import { StyleSheet } from 'react-native'
-//import { Metrics, ApplicationStyles } from '../../Themes/'
+import { Metrics } from './Metrics'
 
 export default StyleSheet.create({
   container: {
-    //paddingBottom: Metrics.baseMargin
+    paddingBottom: Metrics.baseMargin
   },
   logo: {
-    //marginTop: Metrics.doubleSection,
-    //height: Metrics.images.logo,
-    //width: Metrics.images.logo,
+    marginTop: Metrics.doubleSection,
+    height: Metrics.images.logo,
+    width: Metrics.images.logo,
     resizeMode: 'contain'
   },
   agent: {
@@ -17,5 +17,8 @@ export default StyleSheet.create({
   },
   centered: {
     alignItems: 'center'
+  },
+  section: {
+    backgroundColor:'blue'
   }
 })
