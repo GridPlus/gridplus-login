@@ -11,9 +11,9 @@ let init_route = 'LaunchScreen';
 // Manifest of possible screens
 const PrimaryNav = StackNavigator({
   LaunchScreen: { screen: LaunchScreen },
-  // Devices: { screen: DevicesScreen },
-  // Setup: { screen: SetupScreen },
-  // RegisterDevice: { screen: RegisterDeviceScreen },
+  Devices: { screen: DevicesScreen },
+  Setup: { screen: SetupScreen },
+  RegisterDevice: { screen: RegisterDeviceScreen },
 }, {
   // Default config for all screens
   headerMode: 'none',

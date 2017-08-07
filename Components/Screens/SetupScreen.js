@@ -41,24 +41,29 @@ export default class RegisterScreen extends Component {
   renderProceed() {
     if (!this.state.seed_written) {
       return (
-        <Button onPress={() => {
-          this.state.seed_written = true;
-          this.forceUpdate();
-        }}>
-          I have written this down
-        </Button>
+        <Button
+          title="I have written this down"
+          onPress={() => {
+            this.state.seed_written = true;
+            this.forceUpdate();
+          }}
+        />
       );
     } else if (!this.state.double_check) {
       return (
         <View style={{ 'marginTop': 30}}>
           <Text style={Styles.centerBoldText}>We're not kidding, you really need to write this down. We can't help you if you lose it.</Text>
-          <Button onPress={() => { this.state.double_check = true; this.forceUpdate(); }}>
+          <Button
+            title="I promise I have written it down"
+            onPress={() => { this.state.double_check = true; this.forceUpdate(); }}>
             I promise I have written it down
           </Button>
         </View>
       );
     } else {
-      this.props.navigation.navigate('RegisterDevice');
+      this.state.seed_written = true;
+      this.state.double_check = true;
+      return;
     }
   }
 
@@ -69,7 +74,7 @@ export default class RegisterScreen extends Component {
           Your secret backup phrase
         </Text>
         <View style={{'marginTop': 50, 'backgroundColor': '#1a1a1a', 'marginRight': 10, 'marginLeft': 10, 'borderRadius': 10}}>
-          <Text style={styles.sectionText}>
+          <Text style={{textAlign: 'center', color: 'white'}}>
             {this.state.m}
           </Text>
         </View>
@@ -179,10 +184,10 @@ export default class RegisterScreen extends Component {
       )
     } else if (params.enter_phrase && params.phrase_matches == false) {
       return this.renderEnterPhrase()
-    } else if (!params.enter_phrase && (!params.seed_written || !params.double_check)) {
+    } else if (!params.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      navigate('RegisterDevice')
+      this.props.navigation.navigate('LaunchScreen');
     }
   }
 

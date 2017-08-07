@@ -26,6 +26,7 @@ function write(path, data, encoding) {
 
 function read(path) {
   return new Promise((resolve, reject) => {
+    console.log('bas_dir', ifs.DocumentDirectoryPath)
     ifs.exists(path)
     .then((exists) => {
       if (exists) { return ifs.readFile(path) }

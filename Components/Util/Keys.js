@@ -52,7 +52,7 @@ function generateKey() {
 }
 
 function hash(s) {
-  sha3(s)
+  return sha3(s)
 }
 
 // See if a key exists. Returns the mnemonic or null

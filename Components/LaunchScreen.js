@@ -26,10 +26,10 @@ export default class LaunchScreen extends Component {
     registry_addr: null,
   }
 
-  /*componentDidMount() {
+  componentDidMount() {
     const { navigation }  = this.props;
     const { navigate } = navigation;
-    const { params } = navigation.state;
+    const params = navigation.state.params || {};
     this.state.navigate = navigate;
     Keys.getAddress()
     .then((addr) => {
@@ -53,15 +53,13 @@ export default class LaunchScreen extends Component {
           (params.enter_phrase === false && (!params.seed_written || !params.double_check))
         )
       ) {
-        x=1
-        //navigate('Setup', params)
+        navigate('Setup', params)
       }
       else if (!this.state.s || !this.state.device_addr) {
-        //navigate('RegisterDevice', params)
-        x=2
+        navigate('RegisterDevice', params)
       }
     })
-  }*/
+  }
 
   //openDevices() { this.state.navigate('Devices') }
 
