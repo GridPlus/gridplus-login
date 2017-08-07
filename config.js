@@ -3,7 +3,7 @@ exports.api = {
   "port": 3001
 }
 
-const HttpProvider = require('./App/Containers/Util/ethjs-provider-http.js');
+const HttpProvider = require('./Components/Util/ethjs-provider-http.js');
 const Eth = require('ethjs-query');
 const eth = new Eth(new HttpProvider('https://infuranet.infura.io'));
 exports.eth = eth;
