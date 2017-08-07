@@ -77,4 +77,4 @@ const ApplicationStyles = {
   }
 }
 
-export default ApplicationStyles
+exports.ApplicationStyles = ApplicationStyles

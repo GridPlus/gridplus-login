@@ -65,7 +65,7 @@ export default class LaunchScreen extends Component {
 
   //openDevices() { this.state.navigate('Devices') }
 
-  /*render () {
+  render () {
     this.state.navigate = this.props.navigation.navigate;
     return (
       <View style={styles.mainContainer}>
@@ -81,8 +81,5 @@ export default class LaunchScreen extends Component {
         </ScrollView>
       </View>
     )
-  }*/
-  render () {
-    return (<Text>wassup</Text>)
   }
 }

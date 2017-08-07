@@ -1,8 +1,11 @@
 import { StyleSheet } from 'react-native'
 import { Metrics } from './Metrics'
+import { ApplicationStyles } from './ApplicationStyles'
 
 export default StyleSheet.create({
+   ...ApplicationStyles.screen,
   container: {
+    paddingTop: Metrics.paddingTop,
     paddingBottom: Metrics.baseMargin
   },
   logo: {
@@ -18,7 +21,4 @@ export default StyleSheet.create({
   centered: {
     alignItems: 'center'
   },
-  section: {
-    backgroundColor:'blue'
-  }
 })

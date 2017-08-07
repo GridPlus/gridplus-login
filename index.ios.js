@@ -9,19 +9,10 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  Navigator,
 } from 'react-native';
 import PrimaryNav from './Navigation/AppNavigation'
-
-export default class gridplus extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <PrimaryNav/>
-      </View>
-    );
-  }
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -42,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('gridplus', () => gridplus);
+AppRegistry.registerComponent('gridplus', () => PrimaryNav);
