@@ -1,9 +1,9 @@
 // Functions for extracting and saving keys from/to disk
 //let crypto = require('crypto');
 let bip39 = require('bip39');
-var elliptic = require('elliptic');
-const secp256k1 = new (elliptic.ec)('secp256k1');
-let ethutil = require('ethjs-account');
+// var elliptic = require('elliptic');
+// const secp256k1 = new (elliptic.ec)('secp256k1');
+let ethutil = require('./ethjs-account');
 let Promise = require('bluebird').Promise;
 // let ifs = require('react-native-fs');
 let wordlist = require('../Setup/bip_39_words.json');
@@ -92,16 +92,7 @@ function getAddress() {
 function address(mnemonic) {
   // Convert seed mnemonic to private key via BIP39
   let priv = '0x' + bip39.mnemonicToSeedHex(mnemonic).substr(0, 64)
-  console.log('priv', priv)
-  let pub = ethutil.privateToPublic(priv).toString('hex')
-  console.log('pub', pub)
-
-  let pre_addr = sha3(pub).slice(12).toString('hex')
-  console.log('pre-addr', pre_addr)
-
-  // ethjs-account functions not handled properly in RN and ethereumjs-util doesn't work either
-  let addr = ethutil.getAddress(pre_addr)
-  console.log('addr', addr)
+  let addr = ethutil.privateToAccount(priv).address
   return addr;
 }
 
