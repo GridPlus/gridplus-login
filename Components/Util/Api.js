@@ -24,15 +24,14 @@ import '../../shim.js'
 function get(url, headers) {
   return new Promise((resolve, reject) => {
     var options = {
-      host: BASE,
-      port: PORT,
-      path: url,
       method: 'GET',
     };
+    const endpoint = `https://${BASE}:${PORT}${url}`
     if (headers) { options.headers = headers; }
-    request(options)
-    .then((body) => { resolve(body); })
-    .catch((err) => { reject(err); })
+
+    request(endpoint, options)
+    .then((body) => { console.log('body?', body); resolve(body); })
+    .catch((err) => { console.log('got error', err); reject('Error connecting to server'); })
   })
 }
 
@@ -47,41 +46,29 @@ function get(url, headers) {
 function post(url, headers, data) {
   return new Promise((resolve, reject) => {
     var options = {
-      host: BASE,
-      port: PORT,
-      path: url,
+      // host: BASE,
+      // port: PORT,
+      // path: url,
       method: 'POST',
-      headers: headers
+      headers: headers,
+      body: JSON.stringify(data)
     };
 
-    request(options, data)
+    request(url, options)
     .then((body) => { resolve(body); })
     .catch((err) => { reject(err); })
   })
 }
 
 // Make any kind of http request given params and, optionally, POST data
-function request(options, data) {
+function request(url, options) {
   return new Promise((resolve, reject) => {
-
-    var req = https.request(options, function(res) {
-      if (res.statusCode < 200 || res.statusCode >= 300) {
-        return reject(new Error('statusCode=' + res.statusCode));
-      }
-      var body = [];
-      res.on('data', function(chunk) { body.push(chunk); });
-
-      res.on('end', function() {
-        try { body = JSON.parse(Buffer.concat(body).toString()); }
-        catch(e) { reject(e); }
-        resolve(body);
-      });
-    });
-
-    // reject on request error
-    req.on('error', function(err) { reject(err); });
-    if (data) { req.write(data); }
-
-    req.end();
+    fetch(url, options || {})
+    .then((res) => { return res.json() })
+    .then((res_json) => {
+      console.log('res_json', res_json)
+      resolve(res_json);
+    })
+    .ctach((err) => { reject(err); })
   })
 }

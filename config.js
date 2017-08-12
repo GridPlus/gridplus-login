@@ -1,5 +1,5 @@
 exports.api = {
-  "base_url": "app.gridplus.io",
+  "base_url": "localhost",
   "port": 3001
 }
 

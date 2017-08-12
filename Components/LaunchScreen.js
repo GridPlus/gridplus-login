@@ -9,6 +9,7 @@ var Keys = require('./Util/Keys.js');
 var Device = require('./Util/Device.js');
 var Api = require('./Util/Api.js');
 var Fs = require('./Util/Fs.js');
+var Alert = require('./Util/Alert.js');
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
@@ -27,20 +28,24 @@ export default class LaunchScreen extends Component {
   }
 
   componentDidMount() {
+    console.log('LAUNCH SCREEN')
     const { navigation }  = this.props;
     const { navigate } = navigation;
     const params = navigation.state.params || {};
     this.state.navigate = navigate;
     Keys.getAddress()
     .then((addr) => {
+      console.log('addr', addr)
       this.state.owner_addr = addr;
       return Device.getSerial()
     })
     .then((serial) => {
+      console.log('serial', serial)
       this.state.s = serial;
       return Api.get('/Registry')
     })
     .then((registry) => {
+      console.log('registry', registry)
       this.state.registry_addr = registry.result;
       return Device.getDeviceAddr(this.stateregistry_addr, this.state.s, this.state.owner_addr)
     })
@@ -58,6 +63,9 @@ export default class LaunchScreen extends Component {
       else if (!this.state.s || !this.state.device_addr) {
         navigate('RegisterDevice', params)
       }
+    })
+    .catch((err) => {
+      Alert.alert('Error', String(err))
     })
   }
 
