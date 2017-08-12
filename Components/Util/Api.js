@@ -28,10 +28,9 @@ function get(url, headers) {
     };
     const endpoint = `https://${BASE}:${PORT}${url}`
     if (headers) { options.headers = headers; }
-
     request(endpoint, options)
-    .then((body) => { console.log('body?', body); resolve(body); })
-    .catch((err) => { console.log('got error', err); reject('Error connecting to server'); })
+    .then((body) => { resolve(body); })
+    .catch((err) => { reject('Error connecting to server'); })
   })
 }
 
@@ -46,17 +45,14 @@ function get(url, headers) {
 function post(url, headers, data) {
   return new Promise((resolve, reject) => {
     var options = {
-      // host: BASE,
-      // port: PORT,
-      // path: url,
-      method: 'POST',
-      headers: headers,
+      method: 'GET',
       body: JSON.stringify(data)
     };
-
-    request(url, options)
+    const endpoint = `https://${BASE}:${PORT}${url}`
+    if (headers) { options.headers = headers; }
+    request(endpoint, options)
     .then((body) => { resolve(body); })
-    .catch((err) => { reject(err); })
+    .catch((err) => { reject('Error connecting to server'); })
   })
 }
 
@@ -65,10 +61,7 @@ function request(url, options) {
   return new Promise((resolve, reject) => {
     fetch(url, options || {})
     .then((res) => { return res.json() })
-    .then((res_json) => {
-      console.log('res_json', res_json)
-      resolve(res_json);
-    })
-    .ctach((err) => { reject(err); })
+    .then((res_json) => { resolve(res_json); })
+    .catch((err) => { reject(err); })
   })
 }
