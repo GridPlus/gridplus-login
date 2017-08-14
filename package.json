@@ -7,7 +7,8 @@
     "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,http,https,events,path,process,stream,vm --hack && react-native link",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "ios": "react-native run-ios"
+    "ios": "react-native run-ios",
+    "log-ios": "react-native log-ios | grep -v nw_connection_get_connected_socket_block_invoke"
   },
   "dependencies": {
     "assert": "^1.4.1",
