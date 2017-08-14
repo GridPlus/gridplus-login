@@ -42,17 +42,19 @@ function get(url, headers) {
  * @param  {Object} headers (optional)
  */
 
-function post(url, headers, data) {
+function post(url, data, headers) {
   return new Promise((resolve, reject) => {
     var options = {
-      method: 'GET',
+      method: 'POST',
       body: JSON.stringify(data)
     };
+
     const endpoint = `https://${BASE}:${PORT}${url}`
     if (headers) { options.headers = headers; }
+    else { options.headers = { 'Accept': 'application/json', 'Content-Type': 'application/json'} }
     request(endpoint, options)
     .then((body) => { resolve(body); })
-    .catch((err) => { reject('Error connecting to server'); })
+    .catch((err) => { reject(err); })
   })
 }
 

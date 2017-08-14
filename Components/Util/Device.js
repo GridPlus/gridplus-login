@@ -43,6 +43,9 @@ function getDeviceAddr(registry, serial, owner) {
       // Get the wallet address of this device
       // ABI get_owner_wallet(bytes32,address)
       let data = `0x5934df54${config.zfill(sha3(serial))}${config.zfill(owner)}`
+      console.log('serial', serial, 'owner', owner, 'hash', sha3(serial))
+      console.log('data', data)
+      console.log('registry', registry)
       config.eth.call({ to: registry, data: data })
       .then((addr) => {
         if (addr == '0x') { resolve(null); }
@@ -53,18 +56,40 @@ function getDeviceAddr(registry, serial, owner) {
   })
 }
 
+// Check to see if an address has claimed a particular serial number
+function isOwner(registry, serial, owner) {
+  return new Promise((resolve, reject) => {
+    // Soft failure because there will be many cases where this is true
+    if (!registry || !serial || !owner) { resolve(null) }
+    else {
+      // Get the wallet address of this device
+      // ABI check_owner(bytes32,address)
+      let data = `0xf9d0bbee${config.zfill(sha3(serial))}${config.zfill(owner)}`
+      config.eth.call({ to: registry, data: data })
+      .then((claimed) => { resolve(Bool(claimed.toNumber())) })
+      .catch((err) => { reject(err); })
+    }
+  })
+}
+
+
 // Look up a serial number (by its hash) on the blockchain
 // Returns true if it has been whitelisted by grid+
 function lookupSerial(s) {
   return new Promise((resolve, reject) => {
     let hash = sha3(s);
+    console.log('got hash', hash)
     api.get('/Registry')
     .then((res) => {
       let data = `0x5524d548${config.zfill(hash)}`
       let registry_addr = res.result;
+      console.log('data', data)
+      console.log('registry_addr', registry_addr)
+      console.log('config.eth', config.eth.call)
       return config.eth.call({ to: registry_addr, data: data})
     })
     .then((is_registered) => {
+      console.log('is_registered', is_registered)
       if (parseInt(is_registered) && parseInt(is_registered) == 1) {
         return saveSerial(s).then(() => { resolve(true) });
       }

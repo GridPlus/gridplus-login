@@ -1,5 +1,4 @@
 // This screen will load if no wallet exists on the device.
-
 import React, { Component } from 'react'
 var Styles = require('../../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
@@ -9,7 +8,19 @@ import { Button, Card } from 'react-native-elements'
 let Device = require('../Util/Device.js')
 let Keys = require('../Util/Keys.js')
 let Api = require('../Util/Api.js')
+var Alert = require('../Util/Alert.js');
 let Eth = require('../Util/Eth.js')
+let config = require('../../config.js');
+let Fs = require('../Util/Fs.js')
+let sha3 = require('js-sha3').keccak256;
+
+
+// Getting weird (incorrect) errors from bluebird. Really hard to debug,
+// so disabling for now
+import bluebird from 'bluebird';
+bluebird.config({ warnings: false })
+
+
 // Styles
 import styles from '../../Styles/LaunchScreenStyles'
 
@@ -34,7 +45,7 @@ export default class RegisterScreen extends Component {
   // On mount, get the owner and device addresses
   // as well as the serial number (if it exists)
   componentDidMount() {
-    Device.getSerial()
+    return Device.getSerial()
     .then((s) => {
       this.state.s = s;
       return Keys.getAddress()
@@ -45,11 +56,27 @@ export default class RegisterScreen extends Component {
     })
     .then((registry) => {
       this.state.registry_addr = registry.result;
-      return Device.getDeviceAddr(this.state.registry_addr, this.state.s, this.state.owner_addr)
+      return Fs.read('jwt')
     })
-    .then((device) => {
-      this.state.device_addr = device;
+    .then((jwt) => {
+      // If there is a JSON-Web-Token, we are authenticated
+      if (!jwt) {
+        return Api.get('/AuthDatum')
+        .then((d) => {
+          let msg = sha3(d.result)
+          return Keys.ecsign(msg, false)
+        })
+        .then((sig) => {
+          let data = { owner: this.state.owner_addr, sig: sig }
+          return Api.post('/Authenticate', data)
+        })
+        .then((res) => {
+          if (res.err) { Alert.alert('Error', res.err)}
+        })
+        .catch((err) => { Alert.alert('Error', String(err)) })
+      }
     })
+    .catch((err) => { Alert.alert('Error', String(err)) })
   }
 
   // Form and sign a transaction
@@ -62,17 +89,34 @@ export default class RegisterScreen extends Component {
       Eth.formUnsigned(owner_addr, registry_addr, data)
       .then((_unsigned) => {
         unsigned = _unsigned;
-        console.log('unsigned', unsigned)
         return Keys.getPrivateKey()
       })
       .then((p) => {
         return Eth.submitTx(unsigned, p)
       })
       .then((receipt) => {
-        console.log('receipt', receipt)
         resolve(true)
       })
       .catch((err) => { reject(err) })
+    })
+  }
+
+  // Request 1-time faucet distribution if the account has no ether
+  getEther() {
+    return new Promise((resolve, reject) => {
+      Keys.getAddress()
+      .then((addr) => {
+        console.log('my address', addr)
+        return config.eth.getBalance(addr)
+      })
+      .then((bal) => {
+        let balance = bal.toNumber();
+        if (bal < 100000) {
+          return Api.post('/Faucet', )
+        } else {
+          resolve(true)
+        }
+      })
     })
   }
 
@@ -99,7 +143,7 @@ export default class RegisterScreen extends Component {
           title="Submit"
           onPress={() => {
             this.state.s = this.state.tmp;
-            Device.lookupSerial(this.state.s)
+            /*Device.lookupSerial(this.state.s)
             .then((pass) => {
               // TODO: take this out when the contracts are set up on INFURAnet
               // pass = true
@@ -107,11 +151,13 @@ export default class RegisterScreen extends Component {
                 this.state.serial_error = true;
                 navigate('LaunchScreen', this.state)
               } else {
-                return this.claimDevice()
+                console.log('getting ether')
+                return this.getEther()
+                .then(() => { return this.claimDevice() })
                 .then(() => { navigate('LaunchScreen') })
                 .catch((err) => { console.log('err', err); this.state.tx_error = true; navigate('LaunchScreen', this.state) })
               }
-            })
+            })*/
           }}
         />
       </View>
@@ -135,6 +181,7 @@ export default class RegisterScreen extends Component {
     if (params && params.serial_entered && !params.serial_error) {
       return;
     } else {
+      console.log('rendering enter serial')
       return this.renderEnterSerial()
     }
   }

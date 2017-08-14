@@ -28,24 +28,20 @@ export default class LaunchScreen extends Component {
   }
 
   componentDidMount() {
-    console.log('LAUNCH SCREEN')
     const { navigation }  = this.props;
     const { navigate } = navigation;
     const params = navigation.state.params || {};
     this.state.navigate = navigate;
     Keys.getAddress()
     .then((addr) => {
-      console.log('addr', addr)
       this.state.owner_addr = addr;
       return Device.getSerial()
     })
     .then((serial) => {
-      console.log('serial', serial)
       this.state.s = serial;
       return Api.get('/Registry')
     })
     .then((registry) => {
-      console.log('registry', registry)
       this.state.registry_addr = registry.result;
       return Device.getDeviceAddr(this.stateregistry_addr, this.state.s, this.state.owner_addr)
     })

@@ -9,6 +9,7 @@ let Promise = require('bluebird').Promise;
 let wordlist = require('../Setup/bip_39_words.json');
 let fs = require('./Fs.js');
 let sha3 = require('js-sha3').keccak256;
+let signer = require('./ethjs-signer.js')
 
 // Import this thing as a hack to get react-native-crypto to import :(
 import '../../shim.js'
@@ -22,6 +23,7 @@ exports.getPrivateKey = getPrivateKey;
 exports.getAddress = getAddress;
 exports.hash = hash;
 exports.address = address;
+exports.ecsign = ecsign;
 
 // Generate a mnemonic/key via BIP39. Returns the mnemonic if generated.
 function generateKey() {
@@ -120,5 +122,23 @@ function hashFile(f) {
       .catch((err) => { reject(err) })
     }
     else { resolve('0') }
+  })
+}
+
+// Sign a message with the private key saved to disk
+function ecsign(msg, _makeObj) {
+  return new Promise((resolve, reject) => {
+    let makeObj = _makeObj || false;
+    getPrivateKey()
+    .then((pkey) => {
+      var sig = signer.ecsign(msg, pkey, true);
+      console.log('pkey', pkey)
+      console.log('r', sig.r.toString('hex'))
+      console.log('s', sig.s.toString('hex'))
+      console.log('v', sig.v.toString('hex'))
+      let new_sig = sig.r.toString('hex') + sig.s.toString('hex') + sig.v.toString('hex')
+      resolve(new_sig)
+    })
+    .catch((err) => { reject(err) })
   })
 }
