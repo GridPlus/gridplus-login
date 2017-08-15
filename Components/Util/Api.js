@@ -102,12 +102,12 @@ exports.signIn = function(overwrite) {
         })
         .then((sig) => {
           // POST the address that signed the message and the signature itself
-          let data = { owner: owner_addr.toLowerCase(), sig: sig }
+          let data = { owner: owner_addr, sig: sig }
           return post('/Authenticate', data)
         })
         .then((res) => {
           // If there is an error in the API response, reject it.
-          if (res.err) { reject(err); }
+          if (res.err) { reject(res.err); }
           else {
             // If no error, write the JSON web token to disk (DATADIR/jwt)
             // And resolve the JSON web token for use after this function.

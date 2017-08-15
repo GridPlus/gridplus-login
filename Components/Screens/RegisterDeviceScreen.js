@@ -64,8 +64,8 @@ export default class RegisterScreen extends Component {
   claimDevice(serial_hash) {
     return new Promise((resolve, reject) => {
       let { owner_addr, registry_addr, s } = this.state;
-      // Claim(bytes32)
-      let data = `0xbd6652${Keys.hash(s)}`;
+      // claim(bytes32)
+      let data = `0xbd66528a${Keys.hash(s)}`;
       let unsigned;
       Eth.formUnsigned(owner_addr, registry_addr, data)
       .then((_unsigned) => {
@@ -85,15 +85,18 @@ export default class RegisterScreen extends Component {
   // Request 1-time faucet distribution if the account has no ether
   getEther() {
     return new Promise((resolve, reject) => {
+      let { params } = this.props.navigation.state;
       Keys.getAddress()
       .then((addr) => {
-        console.log('my address', addr)
         return config.eth.getBalance(addr)
       })
       .then((bal) => {
-        let balance = bal.toNumber();
+        let balance = Number(bal);
         if (bal < 100000) {
-          return Api.post('/Faucet', )
+          return Api.post('/Faucet', { serial_hash: this.state.s, token: params.jwt })
+          .then((res) => {
+            resolve(true)
+          })
         } else {
           resolve(true)
         }
@@ -124,7 +127,7 @@ export default class RegisterScreen extends Component {
           title="Submit"
           onPress={() => {
             this.state.s = this.state.tmp;
-            /*Device.lookupSerial(this.state.s)
+            Device.lookupSerial(this.state.s)
             .then((pass) => {
               // TODO: take this out when the contracts are set up on INFURAnet
               // pass = true
@@ -132,13 +135,12 @@ export default class RegisterScreen extends Component {
                 this.state.serial_error = true;
                 navigate('LaunchScreen', this.state)
               } else {
-                console.log('getting ether')
                 return this.getEther()
                 .then(() => { return this.claimDevice() })
                 .then(() => { navigate('LaunchScreen') })
-                .catch((err) => { console.log('err', err); this.state.tx_error = true; navigate('LaunchScreen', this.state) })
+                .catch((err) => { this.state.tx_error = true; navigate('LaunchScreen', this.state) })
               }
-            })*/
+            })
           }}
         />
       </View>
@@ -162,7 +164,6 @@ export default class RegisterScreen extends Component {
     if (params && params.serial_entered && !params.serial_error) {
       return;
     } else {
-      console.log('rendering enter serial')
       return this.renderEnterSerial()
     }
   }

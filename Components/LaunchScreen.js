@@ -72,6 +72,7 @@ export default class LaunchScreen extends Component {
       }
       // If the owner doesn't have a serial number/device saved, set one up.
       else if (!this.state.s || !this.state.device_addr) {
+        params.jwt = this.state.jwt;
         navigate('RegisterDevice', params)
       }
       // If both of the above conditions are bypassed, we can launch this screen.

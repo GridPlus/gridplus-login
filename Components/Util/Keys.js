@@ -22,7 +22,6 @@ exports.getKey = getKey;
 exports.getPrivateKey = getPrivateKey;
 exports.getAddress = getAddress;
 exports.hash = hash;
-exports.address = address;
 exports.ecsign = ecsign;
 
 // Generate a mnemonic/key via BIP39. Returns the mnemonic if generated.
@@ -81,21 +80,16 @@ function getPrivateKey() {
 // Get the key and convert it to an address on the spot
 function getAddress() {
   return new Promise((resolve, reject) => {
-    getKey()
-    .then((m) => {
-      if (!m) { resolve(null) }
-      else { resolve(address(m)); }
+    getPrivateKey()
+    .then((pkey) => {
+      if (!pkey) { resolve(null) }
+      else {
+        let addr = ethutil.privateToAccount(pkey).address;
+        resolve(addr);
+      }
     })
     .catch((err) => { reject(err); })
   })
-}
-
-// Get the Ethereum address of a saved mnemonic
-function address(mnemonic) {
-  // Convert seed mnemonic to private key via BIP39
-  let priv = '0x' + bip39.mnemonicToSeedHex(mnemonic).substr(0, 64)
-  let addr = ethutil.privateToAccount(priv).address
-  return addr;
 }
 
 // Check a user-entered phrase against a wordlist.
