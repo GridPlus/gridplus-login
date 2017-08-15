@@ -2,14 +2,20 @@
 
 import React, { Component } from 'react'
 import { ScrollView, Text, Image, View, TouchableOpacity } from 'react-native'
-// import SetupScreen from './Screens/SetupScreen'
-// import RegisterDeviceScreen from './Screens/RegisterDeviceScreen'
+import { Icon, Header } from 'react-native-elements'
+var ScrollableTabView = require('react-native-scrollable-tab-view');
 
+// Local imports
 var Keys = require('./Util/Keys.js');
 var Device = require('./Util/Device.js');
 var Api = require('./Util/Api.js');
 var Fs = require('./Util/Fs.js');
 var Alert = require('./Util/Alert.js');
+
+// Screens
+import UsageScreen from './Screens/UsageScreen'
+import DevicesScreen from './Screens/DevicesScreen'
+
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
@@ -18,14 +24,31 @@ import PrimaryNav from '../Navigation/AppNavigation.js'
 
 export default class LaunchScreen extends Component {
 
-  state = {
+  constructor() {
+    super()
+    this.state = {
+      m: null,
+      owner_addr: null,
+      device_addr: null,
+      s: null,
+      navigate: null,
+      registry_addr: null,
+      selectedTab: 'usage'
+    }
+  }
+  /*state = {
     m: null,
     owner_addr: null,
     device_addr: null,
     s: null,
     navigate: null,
     registry_addr: null,
+  }*/
+
+  changeTab (selectedTab) {
+    this.setState({selectedTab})
   }
+
 
   // This is the main app screen. Each time it loads, we want to load up the
   // necessary pieces of our app state.
@@ -82,18 +105,19 @@ export default class LaunchScreen extends Component {
     })
   }
 
+
   render () {
     this.state.navigate = this.props.navigation.navigate;
+    const { selectedTab } = this.state
     return (
       <View style={styles.mainContainer}>
         <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
-          <View style={styles.section}>
-            <Text style={styles.sectionText}>
-              Welcome to your Grid+ Portal
-            </Text>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <Text>Hello</Text>
-            </View>
+          <View style={{...styles.content, alignItems:'center'}}>
+            <Image source={require('../Images/gridplus_logo.png')}/>
+            <ScrollableTabView>
+              <UsageScreen tabLabel="Usage" />
+              <DevicesScreen tabLabel="Devices" />
+            </ScrollableTabView>
           </View>
         </ScrollView>
       </View>
