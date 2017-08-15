@@ -132,10 +132,6 @@ function ecsign(msg, _makeObj) {
     getPrivateKey()
     .then((pkey) => {
       var sig = signer.ecsign(msg, pkey, true);
-      console.log('pkey', pkey)
-      console.log('r', sig.r.toString('hex'))
-      console.log('s', sig.s.toString('hex'))
-      console.log('v', sig.v.toString('hex'))
       let new_sig = sig.r.toString('hex') + sig.s.toString('hex') + sig.v.toString('hex')
       resolve(new_sig)
     })

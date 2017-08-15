@@ -6693,10 +6693,10 @@ function ecsign(msg, privateKey, toObject) {
  var raw = [];
 
  // Remove hash 0x prefix if it exists
- var msgFinal = msg.substr(0, 2) === '0x' ? msg.substr(2, msg.length - 2) : msg;
+ // const msgFinal = msg.substr(0, 2) === '0x' ? msg.substr(2, msg.length - 2) : msg;
 
  // private key is not stored in memory
- var signature = secp256k1.keyFromPrivate(new Buffer(privateKey.slice(2), 'hex')).sign(new Buffer(keccak256(rlp.encode(msgFinal)), 'hex'), { canonical: true });
+ var signature = secp256k1.keyFromPrivate(new Buffer(privateKey.slice(2), 'hex')).sign(new Buffer(msg, 'hex'), { canonical: true });
 
  raw.push(new Buffer([27 + signature.recoveryParam]));
  raw.push(bnToBuffer(signature.r));

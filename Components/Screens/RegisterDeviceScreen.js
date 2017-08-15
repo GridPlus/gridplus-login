@@ -63,11 +63,11 @@ export default class RegisterScreen extends Component {
       if (!jwt) {
         return Api.get('/AuthDatum')
         .then((d) => {
-          let msg = sha3(d.result)
+          let msg = sha3(d.result);
           return Keys.ecsign(msg, false)
         })
         .then((sig) => {
-          let data = { owner: this.state.owner_addr, sig: sig }
+          let data = { owner: this.state.owner_addr.toLowerCase(), sig: sig }
           return Api.post('/Authenticate', data)
         })
         .then((res) => {
