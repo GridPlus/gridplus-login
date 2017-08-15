@@ -27,27 +27,41 @@ export default class LaunchScreen extends Component {
     registry_addr: null,
   }
 
+  // This is the main app screen. Each time it loads, we want to load up the
+  // necessary pieces of our app state.
   componentDidMount() {
     const { navigation }  = this.props;
     const { navigate } = navigation;
     const params = navigation.state.params || {};
     this.state.navigate = navigate;
+    // Get the address belonging to the keypair stored on this device.
     Keys.getAddress()
     .then((addr) => {
       this.state.owner_addr = addr;
+      // If a serial number has been saved to disk, retrieve it
       return Device.getSerial()
     })
     .then((serial) => {
       this.state.s = serial;
+      // Get the Ethereum address of the registry contract
       return Api.get('/Registry')
     })
     .then((registry) => {
       this.state.registry_addr = registry.result;
-      return Device.getDeviceAddr(this.stateregistry_addr, this.state.s, this.state.owner_addr)
+      // Check if this device is registered to the owner
+      return Device.getDeviceAddr(this.state.registry_addr, this.state.s, this.state.owner_addr)
     })
     .then((device) => {
       this.state.device_addr = device;
-      if (!this.state.owner_addr ||
+      // Make sure this device is authenticated with the Grid+ API
+      return Api.signIn()
+    })
+    .then((jwt) => {
+      this.state.jwt = jwt;
+
+      // Go to the setup screen if needed. This will generate or recover a key
+      // pair to save on device. This is the "owner" key
+      if (this.state.owner_addr === undefined || !this.state.owner_addr ||
         params != undefined && (
           params.route == 'setup' &&
           (params.enter_phrase && !params.phrase_matches) ||
@@ -56,16 +70,16 @@ export default class LaunchScreen extends Component {
       ) {
         navigate('Setup', params)
       }
+      // If the owner doesn't have a serial number/device saved, set one up.
       else if (!this.state.s || !this.state.device_addr) {
         navigate('RegisterDevice', params)
       }
+      // If both of the above conditions are bypassed, we can launch this screen.
     })
     .catch((err) => {
       Alert.alert('Error', String(err))
     })
   }
-
-  //openDevices() { this.state.navigate('Devices') }
 
   render () {
     this.state.navigate = this.props.navigation.navigate;

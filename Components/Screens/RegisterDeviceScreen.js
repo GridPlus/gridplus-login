@@ -56,25 +56,6 @@ export default class RegisterScreen extends Component {
     })
     .then((registry) => {
       this.state.registry_addr = registry.result;
-      return Fs.read('jwt')
-    })
-    .then((jwt) => {
-      // If there is a JSON-Web-Token, we are authenticated
-      if (!jwt) {
-        return Api.get('/AuthDatum')
-        .then((d) => {
-          let msg = sha3(d.result);
-          return Keys.ecsign(msg, false)
-        })
-        .then((sig) => {
-          let data = { owner: this.state.owner_addr.toLowerCase(), sig: sig }
-          return Api.post('/Authenticate', data)
-        })
-        .then((res) => {
-          if (res.err) { Alert.alert('Error', res.err)}
-        })
-        .catch((err) => { Alert.alert('Error', String(err)) })
-      }
     })
     .catch((err) => { Alert.alert('Error', String(err)) })
   }
