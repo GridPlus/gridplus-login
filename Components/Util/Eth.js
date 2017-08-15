@@ -43,3 +43,11 @@ exports.submitTx = function(unsigned, privateKey) {
     .catch((err) => { reject(err) })
   })
 }
+
+exports.call = function(to, data) {
+  return new Promise((resolve, reject) => {
+    config.eth.call(to, data)
+    .then((result) => { resolve(result) })
+    .catch((err) => { reject(err) })
+  })
+}

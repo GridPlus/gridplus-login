@@ -72,15 +72,20 @@ export default class DevicesScreen extends Component {
   }*/
 
   renderDeviceList() {
-    let data = this.props.data || null;
-    let devices = data ? data.devices : [];
+    console.log('this.props', this.props)
+    let { devices } = this.props.data;
+    console.log('devices', devices)
     if (devices.length == 0){
       return (<Text>You have no devices</Text>)
     } else {
+      // NOTE: BOLT has 8 decimals
+      let bolt_bal = devices[0].bolt / Math.pow(10, 8) || '0.00'
       return (
-        <View style={styles.section}>
-          <Text style={{fontWeight:'bold'}}>Agent 1 Serial:</Text>
-          <Text>{devices[0] || ''}</Text>
+        <View style={{alignItems:'center'}}>
+          <Image source={require('../../Images/AgentRender_medium.png')}/>
+          <Text style={{fontWeight:'bold'}}>Agent v1 </Text>
+          <Text>Serial: {devices[0].serial || ''}</Text>
+          <Text>Balance: ${devices[0].bolt || '0.00'}</Text>
         </View>
       )
     }
