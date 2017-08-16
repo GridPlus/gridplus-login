@@ -109,7 +109,7 @@ export default class LaunchScreen extends Component {
       return Api.signIn()
     })
     .then((jwt) => {
-      this.state.jwt = jwt;
+      this.setState({ jwt: jwt })
 
       // Go to the setup screen if needed. This will generate or recover a key
       // pair to save on device. This is the "owner" key
@@ -140,7 +140,9 @@ export default class LaunchScreen extends Component {
     const { selectedTab } = this.state
     console.log('this.state', this.state)
     let device_props = {
+      jwt: this.state.jwt,
       devices: this.state.devices,
+      bolt_addr: this.state.bolt_addr,
     }
     console.log('device_props being passed', device_props)
     return (
