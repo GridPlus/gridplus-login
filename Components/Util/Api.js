@@ -11,7 +11,7 @@ let BASE = config.api.base_url;
 let PORT = config.api.port;
 exports.get = get;
 exports.post = post;
-
+exports.checkUser = checkUser;
 // For Buffer node module
 import '../../shim.js'
 
@@ -130,5 +130,46 @@ exports.signIn = function(overwrite) {
       }
     })
     .catch((err) =>  { reject(err) })
+  })
+}
+
+// Save a user to the DB via the Grid+ API
+exports.saveUser = function(jwt) {
+  return new Promise((resolve, reject) => {
+    if (!jwt) { resolve(null); }
+    else {
+      checkUser(jwt)
+      .then((exists) => {
+        if (exists) { resolve(true); }
+        else {
+          let headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-access-token': jwt
+          };
+          get('/Signup', headers)
+          .then((success) => { resolve(true) })
+          .catch((err) => { reject('Could not sign up user') })
+        }
+      })
+      .catch((err) => { reject(err); })
+    }
+  })
+}
+
+// Check if a user has been saved to the DB. Returns boolean.
+function checkUser(jwt) {
+  return new Promise((resolve, reject) => {
+    let headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'x-access-token': jwt
+    };
+    get('/UserId', headers)
+    .then((id) => {
+      if (id) { resolve(true) }
+      else { resolve(false) }
+    })
+    .catch((err) => { reject('Could not check for user.') })
   })
 }

@@ -96,17 +96,18 @@ export default class LaunchScreen extends Component {
       return Api.signIn()
     })
     .then((jwt) => {
-      console.log('got jwt?', jwt)
       if (jwt) { this.setState({ jwt: jwt }) }
-
+      // See if the user has an account on the Grid+ DB
+      return Api.saveUser(jwt)
+    })
+    .then(() => {
       // Go to the setup screen if needed. This will generate or recover a key
       // pair to save on device. This is the "owner" key
-
       if (this.state.owner_addr === undefined || !this.state.owner_addr ||
         params != undefined && (
           params.route == 'setup' &&
           (params.enter_phrase && !params.phrase_matches) ||
-          (params.enter_phrase === false && (!params.seed_written || !params.double_check))
+          (params.enter_phrase === false && (!params.seed_written || !params.double_check || !params.signed_up))
         )
       ) {
         params.jwt = this.state.jwt;
