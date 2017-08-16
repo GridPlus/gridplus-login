@@ -87,12 +87,17 @@ exports.signIn = function(overwrite) {
     let owner_addr;
     Keys.getAddress()
     .then((addr) => {
+      console.log('signIn::addr', addr)
       owner_addr = addr;
       return Fs.read('jwt')
     })
     .then((jwt) => {
-      // If there is already a JSON-Web-Token saved to disk, use it
-      if (!jwt || overwrite) {
+      console.log('signIn::jwt', jwt)
+      console.log('owner_addr', owner_addr, '!owner_addr', !owner_addr)
+      if (!owner_addr) {
+        resolve(null)
+      } else if ((!jwt || overwrite)) {
+        // If there is already a JSON-Web-Token saved to disk, use it
         // Route /AuthDatum returns the string to sign
         return get('/AuthDatum')
         .then((d) => {

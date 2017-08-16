@@ -70,8 +70,11 @@ function getPrivateKey() {
   return new Promise((resolve, reject) => {
     fs.read(KEY_PATH)
     .then((m) => {
-      let priv = '0x'+bip39.mnemonicToSeedHex(m).substr(0, 64)
-      resolve(priv);
+      if (!m) { resolve(null) }
+      else {
+        let priv = '0x'+bip39.mnemonicToSeedHex(m).substr(0, 64)
+        resolve(priv);
+      }
     })
     .catch((err) => { reject(err); })
   })

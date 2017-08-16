@@ -1,13 +1,15 @@
 // This screen will load if no wallet exists on the device.
-
 import React, { Component } from 'react'
 var Styles = require('../../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
 import { Button, Card, Divider, FormLabel, FormInput } from 'react-native-elements'
-// import LaunchScreen from '../LaunchScreen'
+
+// Local imports
 import RegisterDeviceScreen from './RegisterDeviceScreen'
 let Keys = require('../Util/Keys.js')
 let Fs = require('../Util/Fs.js')
+let Api = require('../Util/Api.js')
+var Alert = require('../Util/Alert.js');
 
 // Styles
 import styles from '../../Styles/LaunchScreenStyles'
@@ -38,6 +40,22 @@ export default class RegisterScreen extends Component {
     .then(() => { this.forceUpdate() })
   }
 
+  // Save a user to the DB via the Grid+ API
+  saveUser(jwt) {
+    let { params } = navigation.state;
+    let headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'x-access-token': params.jwt || jwt
+    };
+    Api.get('/Signup', headers)
+    .then((success) => { return })
+    .catch((err) => {
+      Alert.alert('Error', 'Could not save user.');
+      this.props.navigator.navigate('LaunchScreen', this.state);
+    })
+  }
+
   renderProceed() {
     if (!this.state.seed_written) {
       return (
@@ -55,7 +73,12 @@ export default class RegisterScreen extends Component {
           <Text style={Styles.centerBoldText}>We're not kidding, you really need to write this down. We can't help you if you lose it.</Text>
           <Button
             title="I promise I have written it down"
-            onPress={() => { this.state.double_check = true; this.forceUpdate(); }}>
+            onPress={() => {
+              this.state.double_check = true;
+              Api.login()
+              .then((jwt) => { return this.saveUser(jwt) })
+              .then((saved) => { this.forceUpdate(); })
+            }}>
             I promise I have written it down
           </Button>
         </View>

@@ -38,19 +38,10 @@ export default class LaunchScreen extends Component {
       selectedTab: 'usage'
     }
   }
-  /*state = {
-    m: null,
-    owner_addr: null,
-    device_addr: null,
-    s: null,
-    navigate: null,
-    registry_addr: null,
-  }*/
 
   changeTab (selectedTab) {
     this.setState({selectedTab})
   }
-
 
   // This is the main app screen. Each time it loads, we want to load up the
   // necessary pieces of our app state.
@@ -63,12 +54,12 @@ export default class LaunchScreen extends Component {
     // Get the address belonging to the keypair stored on this device.
     Keys.getAddress()
     .then((addr) => {
-      this.setState({owner_addr: addr})
+      if (addr) { this.setState({owner_addr: addr}) }
       // If a serial number has been saved to disk, retrieve it
       return Device.getSerial()
     })
     .then((serial) => {
-      this.setState({s: serial})
+      if (serial) { this.setState({s: serial}) }
       // Get the Ethereum address of the registry contract
       return Api.get('/Registry')
     })
@@ -91,28 +82,26 @@ export default class LaunchScreen extends Component {
     .then((bolt) => {
       this.setState({bolt_addr: bolt.result})
       // Get the BOLT held by the device
-      // ABI getBalance(address)
-      let data = '0x'
-      if (this.state.devices) {
-        data = `0x70a08231${config.zfill(this.state.devices[0].addr)}`
-      }
-      return Eth.call({ to: this.state.bolt_addr, data: data })
+      let addr = null;
+      if (this.state.devices) { addr = this.state.devices[0].addr; }
+      return Eth.tokenBalance(this.state.bolt_addr, addr)
     })
     .then((bolt_bal) => {
-      console.log('bolt_bal', bolt_bal)
       let devices = this.state.devices;
       if (devices) {
-        devices[0].bolt = parseInt(bolt_bal)
+        devices[0].bolt = bolt_bal
         this.setState({devices: devices})
       }
       // Make sure this device is authenticated with the Grid+ API
       return Api.signIn()
     })
     .then((jwt) => {
-      this.setState({ jwt: jwt })
+      console.log('got jwt?', jwt)
+      if (jwt) { this.setState({ jwt: jwt }) }
 
       // Go to the setup screen if needed. This will generate or recover a key
       // pair to save on device. This is the "owner" key
+
       if (this.state.owner_addr === undefined || !this.state.owner_addr ||
         params != undefined && (
           params.route == 'setup' &&
@@ -120,6 +109,7 @@ export default class LaunchScreen extends Component {
           (params.enter_phrase === false && (!params.seed_written || !params.double_check))
         )
       ) {
+        params.jwt = this.state.jwt;
         navigate('Setup', params)
       }
       // If the owner doesn't have a serial number/device saved, set one up.
@@ -138,13 +128,11 @@ export default class LaunchScreen extends Component {
   render () {
     this.state.navigate = this.props.navigation.navigate;
     const { selectedTab } = this.state
-    console.log('this.state', this.state)
     let device_props = {
       jwt: this.state.jwt,
       devices: this.state.devices,
       bolt_addr: this.state.bolt_addr,
     }
-    console.log('device_props being passed', device_props)
     return (
       <View style={styles.mainContainer}>
         <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
