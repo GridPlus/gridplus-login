@@ -65,9 +65,7 @@ export default class RegisterScreen extends Component {
               this.state.double_check = true;
               Api.saveUser(params.jwt)
               .then((saved) => { this.state.signed_up = true; this.forceUpdate(); })
-              .catch((err) => {
-                navigate('LaunchScreen', this.state);
-              })
+              .catch((err) => { this.forceUpdate(); }) // This will be attempted again in LaunchScreen
             }}>
             I promise I have written it down
           </Button>
@@ -179,7 +177,7 @@ export default class RegisterScreen extends Component {
                   Keys.generateKey()
                   .then((m) => {
                     this.state.m = m;
-                    navigate('LaunchScreen', this.state)
+                    this.forceUpdate()
                   })
                 }}
               />
@@ -187,7 +185,7 @@ export default class RegisterScreen extends Component {
                 title="Yes"
                 onPress={() => {
                   this.state.enter_phrase = true;
-                  navigate('LaunchScreen', this.state);
+                  this.forceUpdate()
                 }}
               />
             </Card>
@@ -199,7 +197,7 @@ export default class RegisterScreen extends Component {
     } else if (!params.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      this.props.navigation.navigate('LaunchScreen');
+      navigate('LaunchScreen', this.state);
     }
   }
 

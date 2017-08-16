@@ -51,15 +51,30 @@ export default class LaunchScreen extends Component {
     const params = navigation.state.params || {};
 
     this.setState({navigate: navigate})
-    // Get the address belonging to the keypair stored on this device.
-    Keys.getAddress()
+    // Make sure this device is authenticated with the Grid+ API
+    Api.signIn()
+    .then((jwt) => {
+      if (jwt) { this.setState({ jwt: jwt }) }
+      // Get the address belonging to the keypair stored on this device.
+      return Keys.getAddress()
+    })
     .then((addr) => {
       if (addr) { this.setState({owner_addr: addr}) }
+      else {
+        params.jwt = this.state.jwt;
+        this.setState({ cache: true });  // Currently in another screen
+        navigate('Setup', params)
+      }
       // If a serial number has been saved to disk, retrieve it
       return Device.getSerial()
     })
     .then((serial) => {
       if (serial) { this.setState({s: serial}) }
+      else if (!this.state.cache) {
+        params.jwt = this.state.jwt;
+        this.setState({ cache: true });  // Currently in another screen
+        navigate('RegisterDevice', params)
+      }
       // Get the Ethereum address of the registry contract
       return Api.get('/Registry')
     })
@@ -92,29 +107,32 @@ export default class LaunchScreen extends Component {
         devices[0].bolt = bolt_bal
         this.setState({devices: devices})
       }
-      // Make sure this device is authenticated with the Grid+ API
-      return Api.signIn()
-    })
-    .then((jwt) => {
-      if (jwt) { this.setState({ jwt: jwt }) }
       // See if the user has an account on the Grid+ DB
-      return Api.saveUser(jwt)
+      return Api.saveUser(this.state.jwt)
     })
     .then(() => {
+      console.log('this.state.cache', this.state.cache)
       // Go to the setup screen if needed. This will generate or recover a key
       // pair to save on device. This is the "owner" key
-      if (this.state.owner_addr === undefined || !this.state.owner_addr ||
-        params != undefined && (
-          params.route == 'setup' &&
-          (params.enter_phrase && !params.phrase_matches) ||
-          (params.enter_phrase === false && (!params.seed_written || !params.double_check || !params.signed_up))
+      if (
+        !this.state.cache &&
+        (
+          this.state.owner_addr === undefined || !this.state.owner_addr ||
+          (params != undefined && (
+            params.route == 'setup' &&
+            (params.enter_phrase && !params.phrase_matches) ||
+            (params.enter_phrase === false && (!params.seed_written || !params.double_check || !params.signed_up))
+          ))
         )
       ) {
         params.jwt = this.state.jwt;
         navigate('Setup', params)
       }
       // If the owner doesn't have a serial number/device saved, set one up.
-      else if (!this.state.devices || !this.state.devices[0].serial || !this.state.devices[0].addr) {
+      else if (
+        !this.state.cache &&
+        (!this.state.devices || !this.state.devices[0].serial || !this.state.devices[0].addr)
+      ) {
         params.jwt = this.state.jwt;
         navigate('RegisterDevice', params)
       }
