@@ -140,6 +140,7 @@ exports.saveUser = function(jwt) {
     else {
       checkUser(jwt)
       .then((exists) => {
+        console.log('saveUser::exists', exists)
         if (exists) { resolve(true); }
         else {
           let headers = {
@@ -166,9 +167,10 @@ function checkUser(jwt) {
       'x-access-token': jwt
     };
     get('/UserId', headers)
-    .then((id) => {
-      if (id) { resolve(true) }
-      else { resolve(false) }
+    .then((res) => {
+      let id = res.result
+      if (id == false || !id) { resolve(false) }
+      else { resolve(true) }
     })
     .catch((err) => { reject('Could not check for user.') })
   })
