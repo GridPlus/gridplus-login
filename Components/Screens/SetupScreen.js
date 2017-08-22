@@ -1,13 +1,15 @@
 // This screen will load if no wallet exists on the device.
-
 import React, { Component } from 'react'
 var Styles = require('../../Styles/Styles').Styles
 import { ScrollView, Text, Image, View } from 'react-native'
 import { Button, Card, Divider, FormLabel, FormInput } from 'react-native-elements'
-// import LaunchScreen from '../LaunchScreen'
+
+// Local imports
 import RegisterDeviceScreen from './RegisterDeviceScreen'
 let Keys = require('../Util/Keys.js')
 let Fs = require('../Util/Fs.js')
+let Api = require('../Util/Api.js')
+var Alert = require('../Util/Alert.js');
 
 // Styles
 import styles from '../../Styles/LaunchScreenStyles'
@@ -26,6 +28,7 @@ export default class RegisterScreen extends Component {
     phrase: ['','','','','','','','','','','',''],  // 12 word seed phrase
     phrase_matches: false,        // True if the user has entered a phrase and it is legit
     phrase_error: false,          // True if the user has entered a phrase and it was incorrect
+    signed_up: false,
   }
 
   componentDidMount() {
@@ -39,6 +42,9 @@ export default class RegisterScreen extends Component {
   }
 
   renderProceed() {
+    let { navigation } = this.props;
+    let { navigate } = navigation;
+    let { params } = navigation.state;
     if (!this.state.seed_written) {
       return (
         <Button
@@ -49,13 +55,18 @@ export default class RegisterScreen extends Component {
           }}
         />
       );
-    } else if (!this.state.double_check) {
+    } else if (!this.state.double_check || !signed_up) {
       return (
         <View style={{ 'marginTop': 30}}>
           <Text style={Styles.centerBoldText}>We're not kidding, you really need to write this down. We can't help you if you lose it.</Text>
           <Button
             title="I promise I have written it down"
-            onPress={() => { this.state.double_check = true; this.forceUpdate(); }}>
+            onPress={() => {
+              this.state.double_check = true;
+              Api.saveUser(params.jwt)
+              .then((saved) => { this.state.signed_up = true; this.forceUpdate(); })
+              .catch((err) => { this.forceUpdate(); }) // This will be attempted again in LaunchScreen
+            }}>
             I promise I have written it down
           </Button>
         </View>
@@ -70,27 +81,26 @@ export default class RegisterScreen extends Component {
   renderBackupPhrase() {
     return (
       <View >
-        <Text style={Styles.titleText}>
-          Your secret backup phrase
-        </Text>
-        <View style={{'marginTop': 50, 'backgroundColor': '#1a1a1a', 'marginRight': 10, 'marginLeft': 10, 'borderRadius': 10}}>
-          <Text style={{textAlign: 'center', color: 'white'}}>
-            {this.state.m}
-          </Text>
-        </View>
-        <View style={{'marginTop': 50}}/>
+        <Card title="Your secret backup phrase">
+          <View style={{'marginTop': 50, 'backgroundColor': '#1a1a1a', 'marginRight': 10, 'marginLeft': 10, 'borderRadius': 10}}>
+            <Text style={{textAlign: 'center', color: 'white', fontSize: 16}}>
+              {this.state.m}
+            </Text>
+          </View>
+          <View style={{'marginTop': 50}}/>
 
-        <Divider/>
-        <View style={{'marginTop': 50}}/>
-
-        <Text style={Styles.centerBoldText}>
-          YOU MUST WRITE THIS DOWN!
-        </Text>
-        <Text style={Styles.centerText}>
-          Keep it secret, keep it safe, and don't lose it. If you lose this, we can't recover it for you!
-        </Text>
-        <View style={{'marginTop': 50}}/>
-        {this.renderProceed()}
+          <Divider/>
+          <View style={{'marginTop': 50, alignItems: 'center'}}>
+            <Text>
+              YOU MUST WRITE THIS DOWN!
+            </Text>
+            <Text>
+              Keep it secret, keep it safe, and don't lose it. If you lose this, we can't recover it for you!
+            </Text>
+          </View>
+          <View style={{'marginTop': 50}}/>
+          {this.renderProceed()}
+        </Card>
       </View>
     );
   }
@@ -167,7 +177,7 @@ export default class RegisterScreen extends Component {
                   Keys.generateKey()
                   .then((m) => {
                     this.state.m = m;
-                    navigate('LaunchScreen', this.state)
+                    this.forceUpdate()
                   })
                 }}
               />
@@ -175,7 +185,7 @@ export default class RegisterScreen extends Component {
                 title="Yes"
                 onPress={() => {
                   this.state.enter_phrase = true;
-                  navigate('LaunchScreen', this.state);
+                  this.forceUpdate()
                 }}
               />
             </Card>
@@ -187,7 +197,7 @@ export default class RegisterScreen extends Component {
     } else if (!params.enter_phrase && (!this.state.seed_written || !this.state.double_check)) {
       return this.renderBackupPhrase()
     } else {
-      this.props.navigation.navigate('LaunchScreen');
+      navigate('LaunchScreen', this.state);
     }
   }
 

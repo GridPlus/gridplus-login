@@ -10,6 +10,7 @@ const signer = require('./ethjs-signer.js');
 const Keys = require('./Keys.js')
 import '../../shim.js'
 
+exports.call = call;
 
 // Form an unsigned transaction given the components
 // This will automatically and synchronously find the account nonce
@@ -41,5 +42,31 @@ exports.submitTx = function(unsigned, privateKey) {
     config.eth.sendRawTransaction(raw)
     .then((receipt) => { resolve(receipt) })
     .catch((err) => { reject(err) })
+  })
+}
+
+function call(to, data) {
+  return new Promise((resolve, reject) => {
+    config.eth.call(to, data)
+    .then((result) => { resolve(result) })
+    .catch((err) => { reject(err) })
+  })
+}
+
+
+//==========================================
+// Pre-formatted calls
+//==========================================
+
+exports.tokenBalance = function(token, addr) {
+  return new Promise((resolve, reject) => {
+    if (!token || !addr) { resolve(null); }
+    else {
+      // ABI getBalance(address)
+      let data = `0x70a08231${config.zfill(addr)}`
+      call({ to: token, data: data })
+      .then((bal) => { resolve(parseInt(bal)); })
+      .catch((err) => { reject(err); })
+    }
   })
 }

@@ -11,7 +11,7 @@ let BASE = config.api.base_url;
 let PORT = config.api.port;
 exports.get = get;
 exports.post = post;
-
+exports.checkUser = checkUser;
 // For Buffer node module
 import '../../shim.js'
 
@@ -87,12 +87,17 @@ exports.signIn = function(overwrite) {
     let owner_addr;
     Keys.getAddress()
     .then((addr) => {
+      console.log('signIn::addr', addr)
       owner_addr = addr;
       return Fs.read('jwt')
     })
     .then((jwt) => {
-      // If there is already a JSON-Web-Token saved to disk, use it
-      if (!jwt || overwrite) {
+      console.log('signIn::jwt', jwt)
+      console.log('owner_addr', owner_addr, '!owner_addr', !owner_addr)
+      if (!owner_addr) {
+        resolve(null)
+      } else if ((!jwt || overwrite)) {
+        // If there is already a JSON-Web-Token saved to disk, use it
         // Route /AuthDatum returns the string to sign
         return get('/AuthDatum')
         .then((d) => {
@@ -125,5 +130,48 @@ exports.signIn = function(overwrite) {
       }
     })
     .catch((err) =>  { reject(err) })
+  })
+}
+
+// Save a user to the DB via the Grid+ API
+exports.saveUser = function(jwt) {
+  return new Promise((resolve, reject) => {
+    if (!jwt) { resolve(null); }
+    else {
+      checkUser(jwt)
+      .then((exists) => {
+        console.log('saveUser::exists', exists)
+        if (exists) { resolve(true); }
+        else {
+          let headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-access-token': jwt
+          };
+          get('/Signup', headers)
+          .then((success) => { resolve(true) })
+          .catch((err) => { reject('Could not sign up user') })
+        }
+      })
+      .catch((err) => { reject(err); })
+    }
+  })
+}
+
+// Check if a user has been saved to the DB. Returns boolean.
+function checkUser(jwt) {
+  return new Promise((resolve, reject) => {
+    let headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'x-access-token': jwt
+    };
+    get('/UserId', headers)
+    .then((res) => {
+      let id = res.result
+      if (id == false || !id) { resolve(false) }
+      else { resolve(true) }
+    })
+    .catch((err) => { reject('Could not check for user.') })
   })
 }
