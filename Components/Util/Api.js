@@ -140,7 +140,6 @@ exports.saveUser = function(jwt) {
     else {
       checkUser(jwt)
       .then((exists) => {
-        console.log('saveUser::exists', exists)
         if (exists) { resolve(true); }
         else {
           let headers = {

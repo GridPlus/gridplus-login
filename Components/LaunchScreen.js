@@ -99,6 +99,7 @@ export default class LaunchScreen extends Component {
       // Get the BOLT held by the device
       let addr = null;
       if (this.state.devices) { addr = this.state.devices[0].addr; }
+      console.log('bolt', this.state.bolt_addr, 'addr', this.state.devices)
       return Eth.tokenBalance(this.state.bolt_addr, addr)
     })
     .then((bolt_bal) => {
@@ -111,7 +112,6 @@ export default class LaunchScreen extends Component {
       return Api.saveUser(this.state.jwt)
     })
     .then(() => {
-      console.log('this.state.cache', this.state.cache)
       // Go to the setup screen if needed. This will generate or recover a key
       // pair to save on device. This is the "owner" key
       if (

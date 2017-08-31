@@ -47,7 +47,7 @@ exports.submitTx = function(unsigned, privateKey) {
 
 function call(to, data) {
   return new Promise((resolve, reject) => {
-    config.eth.call(to, data)
+    config.eth.call({ to: to, data: data })
     .then((result) => { resolve(result) })
     .catch((err) => { reject(err) })
   })
@@ -64,8 +64,9 @@ exports.tokenBalance = function(token, addr) {
     else {
       // ABI getBalance(address)
       let data = `0x70a08231${config.zfill(addr)}`
-      call({ to: token, data: data })
-      .then((bal) => { resolve(parseInt(bal)); })
+      console.log('tokenBalance::data', data, 'token', token)
+      config.eth.call({ to: token, data: data })
+      .then((bal) => { console.log('tokenBalance', bal); resolve(parseInt(bal)); })
       .catch((err) => { reject(err); })
     }
   })

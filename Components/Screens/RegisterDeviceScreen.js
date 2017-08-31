@@ -69,6 +69,7 @@ export default class RegisterScreen extends Component {
       let unsigned;
       Eth.formUnsigned(owner_addr, registry_addr, data)
       .then((_unsigned) => {
+        console.log('claiming device tx', _unsigned)
         unsigned = _unsigned;
         return Keys.getPrivateKey()
       })
@@ -88,10 +89,12 @@ export default class RegisterScreen extends Component {
       let { params } = this.props.navigation.state;
       Keys.getAddress()
       .then((addr) => {
+        console.log('========= addr', addr, ' ===========')
         return config.eth.getBalance(addr)
       })
       .then((bal) => {
         let balance = Number(bal);
+        console.log('====== balance', balance, '========')
         if (bal < 100000) {
           return Api.post('/Faucet', { serial_hash: this.state.s, token: params.jwt })
           .then((res) => {
@@ -128,13 +131,12 @@ export default class RegisterScreen extends Component {
           onPress={() => {
             this.state.s = this.state.tmp;
             Device.lookupSerial(this.state.s)
-            .then((pass) => {
-              // TODO: take this out when the contracts are set up on INFURAnet
-              // pass = true
-              if (!pass) {
+            .then((success) => {
+              if (!success) {
                 this.state.serial_error = true;
                 navigate('LaunchScreen', this.state)
               } else {
+                console.log('=========== getting ether ===============')
                 return this.getEther()
                 .then(() => { return this.claimDevice() })
                 .then(() => { navigate('LaunchScreen') })

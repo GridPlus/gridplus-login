@@ -93,6 +93,7 @@ function lookupSerial(s) {
       return config.eth.call({ to: registry_addr, data: data})
     })
     .then((is_registered) => {
+      console.log('------\n', 'is_registered', is_registered, '\n-------')
       if (parseInt(is_registered) && parseInt(is_registered) == 1) {
         return saveSerial(s).then(() => { resolve(true) });
       }
