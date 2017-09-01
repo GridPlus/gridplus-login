@@ -174,3 +174,31 @@ function checkUser(jwt) {
     .catch((err) => { reject('Could not check for user.') })
   })
 }
+
+// Get a set of bills for a user
+// Resolves an array of form
+// [
+//   {
+//     x: the x-axis value, a timestamp
+//     y: the y-axis value, the amount
+//   }
+// ]
+exports.getBills = function(params) {
+  return new Promise((resolve, reject) => {
+    let bills = [];
+    post('/Bills', params)
+    .then((res) => {
+      return Promise.resolve(res.result)
+    })
+    .map((bill) => {
+      let tmp = {
+        x: bill.createdAt,
+        y: bill.amount
+      }
+      _bills.push(tmp);
+      return;
+    })
+    .then(() => { resolve(bills); })
+    .catch((err) => { reject(err); })
+  })
+}

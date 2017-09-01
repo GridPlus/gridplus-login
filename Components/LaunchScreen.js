@@ -5,6 +5,7 @@ import { ScrollView, Text, Image, View, TouchableOpacity } from 'react-native'
 import { Icon, Header, Card } from 'react-native-elements'
 var ScrollableTabView = require('react-native-scrollable-tab-view');
 var Spinner = require('react-native-spinkit');
+let sha3 = require('js-sha3').keccak256;
 
 // Local imports
 var Keys = require('./Util/Keys.js');
@@ -88,7 +89,7 @@ export default class LaunchScreen extends Component {
       if (device) {
         const device_addr = `0x${device.substr(26, 40)}`
         let devices = this.state.devices || [];
-        devices.push({ addr: device_addr, serial: this.state.s })
+        devices.push({ addr: device_addr, serial: this.state.s, serial_hash: sha3(this.state.s) })
         this.setState({devices: devices})
       }
       // Get the BOLT address
@@ -153,7 +154,7 @@ export default class LaunchScreen extends Component {
       bolt_addr: this.state.bolt_addr,
     }
 
-    if (!device_props.jwt) {
+    if (!device_props.jwt || !device_props.devices || !device_props.bolt_addr) {
       return (
         <View style={styles.mainContainer}>
           <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
