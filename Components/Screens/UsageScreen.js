@@ -9,6 +9,8 @@ import { SmoothLine } from 'react-native-pathjs-charts'
 
 // Local imports
 var Api = require('../Util/Api.js');
+var Alert = require('../Util/Alert.js');
+
 
 const styles = StyleSheet.create({
   container: {
@@ -91,7 +93,7 @@ export default class UsageScreen extends Component {
         this.setState({ bills: bills })
         console.log('done with bills', this.state.bills)
       })
-      .catch((err) => { console.log('error?', err); console.error('ERROR', err) })
+      .catch((err) => { Alert.alert('Error', String(err)); this.forceUpdate(); })
     }
   }
 
@@ -105,12 +107,7 @@ export default class UsageScreen extends Component {
     } else if (this.state.bills.length == 0) {
       return (
         <View>
-          <Icon
-  name='minus'
-  size={200}
-  type='evilicon'
-  color='#9b9b9b'
-/>
+          <Icon name='minus' size={200} type='evilicon' color='#9b9b9b' />
           <Text>You have no usage history. Once your agent is up and running, you can use this screen to view your usage history.</Text>
         </View>
       )

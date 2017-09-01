@@ -67,7 +67,10 @@ function request(url, options) {
   return new Promise((resolve, reject) => {
     fetch(url, options || {})
     .then((res) => { return res.json() })
-    .then((res_json) => { resolve(res_json); })
+    .then((res_json) => {
+      if (res_json.error) { reject(res_json.error) }
+      resolve(res_json);
+    })
     .catch((err) => { reject(err); })
   })
 }
