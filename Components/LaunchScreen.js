@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react'
 import { ScrollView, Text, Image, View, TouchableOpacity } from 'react-native'
-import { Icon, Header } from 'react-native-elements'
+import { Icon, Header, Card } from 'react-native-elements'
 var ScrollableTabView = require('react-native-scrollable-tab-view');
+var Spinner = require('react-native-spinkit');
 
 // Local imports
 var Keys = require('./Util/Keys.js');
@@ -17,7 +18,6 @@ var config = require('../config.js');
 // Screens
 import UsageScreen from './Screens/UsageScreen'
 import DevicesScreen from './Screens/DevicesScreen'
-
 
 // Styles
 import styles from '../Styles/LaunchScreenStyles'
@@ -152,18 +152,34 @@ export default class LaunchScreen extends Component {
       devices: this.state.devices,
       bolt_addr: this.state.bolt_addr,
     }
-    return (
-      <View style={styles.mainContainer}>
-        <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
-          <View style={{...styles.content, alignItems:'center'}}>
-            <Image source={require('../Images/gridplus_logo.png')}/>
-            <ScrollableTabView>
-              <UsageScreen tabLabel="Usage" />
-              <DevicesScreen tabLabel="Devices" data={device_props} />
-            </ScrollableTabView>
-          </View>
-        </ScrollView>
-      </View>
-    )
+
+    if (!device_props.jwt) {
+      return (
+        <View style={styles.mainContainer}>
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
+            <View style={{...styles.content, alignItems:'center'}}>
+              <Image source={require('../Images/gridplus_logo.png')}/>
+              <Card title="Loading...">
+                <Spinner style={{marginTop: 100, marginBottom: 100, marginLeft: 60, marginRight: 60}} isVisible={true} size={150} type='Wave' color='#4990E2'/>
+              </Card>
+            </View>
+          </ScrollView>
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.mainContainer}>
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
+            <View style={{...styles.content, alignItems:'center'}}>
+              <Image source={require('../Images/gridplus_logo.png')}/>
+              <ScrollableTabView>
+                <UsageScreen tabLabel="Usage" data={device_props} />
+                <DevicesScreen tabLabel="Devices" data={device_props} />
+              </ScrollableTabView>
+            </View>
+          </ScrollView>
+        </View>
+      )
+    }
   }
 }

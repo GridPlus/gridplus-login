@@ -200,6 +200,7 @@ export default class UsageScreen extends Component {
   }
 
   componentDidMount() {
+    console.log('USAGE SCREEN', this.props.data)
   }
 
   renderUsage() {
