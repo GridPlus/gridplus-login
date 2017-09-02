@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf ios/build && rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean --force",
-    "postinstall": "node_modules/.bin/rn-nodeify --install assert,buffer,crypto,http,https,events,path,process,stream,vm --hack && react-native link",
+    "postinstall": "./support/hack-react-native-local-ssl.sh && npm rebuild react-native && node_modules/.bin/rn-nodeify --install assert,buffer,crypto,http,https,events,path,process,stream,vm --hack && react-native link",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "ios": "react-native run-ios",
